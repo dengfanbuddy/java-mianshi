@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>邓凡 · Java 游戏服务器面试速览（打印版）</title>
+<style>
+  :root{
+    --bg:#faf7f2; --panel:#ffffff; --ink:#2e2a26; --muted:#8a8178;
+    --accent:#b0713c; --accent-soft:#f3e6d8; --line:#e8e0d5;
+    --lv1:#5e8c61; --lv2:#b0713c; --lv3:#a34a4a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+
+  /* ===== 屏幕端控制面板（打印时隐藏） ===== */
+  #panel{position:sticky;top:0;z-index:50;background:var(--panel);border-bottom:1px solid var(--line);padding:14px 22px;box-shadow:0 2px 10px rgba(80,60,40,.06)}
+  #panel h1{font-size:16px;color:var(--accent);letter-spacing:.5px}
+  #panel .sub{font-size:12px;color:var(--muted);margin-top:3px}
+  #panel .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+  .seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+  .seg button{border:0;background:var(--panel);padding:6px 16px;font-size:13px;cursor:pointer;color:var(--muted)}
+  .seg button.on{background:var(--accent);color:#fff}
+  .chip{padding:4px 12px;border-radius:14px;border:1px solid var(--line);background:var(--panel);font-size:12px;cursor:pointer;color:var(--muted);user-select:none}
+  .chip.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent);font-weight:600}
+  .chip input{display:none}
+  #panel .hint{font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.6}
+  #catsel{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  #catsel label{font-size:12px;padding:3px 10px;border:1px solid var(--line);border-radius:12px;cursor:pointer;background:var(--bg);color:var(--muted)}
+  #catsel label.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+  #catsel input{display:none}
+
+  /* ===== 打印页眉页脚（fixed 元素在 Chrome/Edge 打印时每页重复） ===== */
+  #pheader,#pfooter{display:none}
+  @media print{
+    #pheader{display:block;position:fixed;top:0;left:0;right:0;text-align:center;
+      font-size:9pt;color:#6b6156;letter-spacing:2px;border-bottom:1px solid #ccc;padding-bottom:4pt}
+    #pfooter{display:block;position:fixed;bottom:0;left:0;right:0;text-align:center;
+      font-size:8pt;color:#8a8178}
+  }
+
+  /* ===== 正文 ===== */
+  #doc{max-width:820px;margin:0 auto;padding:28px 30px 60px}
+
+  /* 目录 */
+  #toc{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 24px;margin-bottom:26px}
+  #toc h2{font-size:17px;color:var(--accent);margin-bottom:10px}
+  #toc ol{margin-left:20px;columns:2;column-gap:34px}
+  #toc li{font-size:13px;line-height:2;list-style:decimal}
+  #toc a{color:var(--ink);text-decoration:none}
+  #toc a:hover{color:var(--accent);text-decoration:underline}
+  #toc .tc{color:var(--muted);font-size:11px}
+
+  /* 分类 */
+  .catsec{margin-bottom:30px}
+  .cathead{border-bottom:2px solid var(--accent);padding-bottom:8px;margin-bottom:14px}
+  .cathead h2{font-size:20px;display:flex;align-items:center;gap:9px}
+  .cathead h2 .cc{font-size:11px;color:var(--muted);font-weight:400;margin-left:auto}
+  .cathead p{color:var(--muted);font-size:12.5px;margin-top:6px;line-height:1.7}
+
+  .lv{font-size:10.5px;padding:1px 8px;border-radius:9px;white-space:nowrap;font-weight:600}
+  .lv1{background:#e5efe4;color:var(--lv1)} .lv2{background:var(--accent-soft);color:var(--lv2)} .lv3{background:#f5e2e0;color:var(--lv3)}
+
+  /* 速览版：紧凑卡片 */
+  .qquick{border:1px solid var(--line);border-radius:9px;background:var(--panel);padding:9px 13px;margin-bottom:8px}
+  .qquick .qq{display:flex;align-items:baseline;gap:9px}
+  .qquick .no{font-size:10.5px;color:var(--muted);min-width:52px}
+  .qquick .qt{flex:1;font-size:13.5px;font-weight:600;line-height:1.5}
+  .qquick .pm{margin-top:5px;font-size:12px;line-height:1.65;display:flex;gap:8px}
+  .qquick .pm .lbl{flex:none;font-weight:700;font-size:11px;padding-top:1px}
+  .qquick .pt{color:#41584a}
+  .qquick .pt .lbl{color:var(--lv1)}
+  .qquick .mm{color:#6b4a2a;background:var(--accent-soft);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;padding:4px 9px;margin-top:5px}
+  .qquick .mm .lbl{color:var(--accent)}
+
+  /* 完整版：完整卡片 */
+  .qfull{border:1px solid var(--line);border-radius:11px;background:var(--panel);padding:13px 17px;margin-bottom:13px}
+  .qfull .qq{display:flex;align-items:flex-start;gap:10px}
+  .qfull .no{font-size:10.5px;color:var(--muted);min-width:52px;padding-top:3px}
+  .qfull .qt{flex:1;font-size:14.5px;font-weight:600;line-height:1.55;padding-top:1px}
+  .qfull .lv{margin-top:2px}
+  .sec{margin-top:9px}
+  .sec .st{font-size:11.5px;font-weight:700;color:var(--accent);letter-spacing:1px;margin-bottom:4px}
+  .sec .sc{font-size:12.5px;line-height:1.8;white-space:pre-wrap;color:#3d3833}
+  .pointline{background:#eef3ec;border-left:3px solid var(--lv1);border-radius:0 7px 7px 0;padding:6px 11px;font-size:12.5px;line-height:1.7;color:#41584a;margin-top:9px}
+  .approachbox{background:#f6f1ea;border:1px dashed #d8c9b4;border-radius:7px;padding:7px 11px}
+  .fu li{font-size:12.5px;line-height:1.75;margin-left:17px;color:#4a443e;margin-bottom:6px}
+  .fu .fuq{font-weight:600;color:#3d3833}
+  .fu .fua{color:#6a6156}
+  .memobox{background:var(--accent-soft);border-left:3px solid var(--accent);border-radius:0 7px 7px 0;padding:7px 11px;font-size:12.5px;line-height:1.7;color:#6b4a2a}
+  .tagsline{margin-top:9px;display:flex;gap:5px;flex-wrap:wrap}
+  .tag{font-size:10.5px;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:1px 7px}
+  #empty{color:var(--muted);text-align:center;padding:50px 0;font-size:14px}
+
+  /* ===== 打印排版 ===== */
+  @page{ size:A4; margin:18mm 14mm 16mm 14mm; }
+  @media print{
+    body{background:#fff}
+    #panel{display:none !important}
+    #doc{max-width:none;padding:0}
+    .catsec{page-break-before:always}
+    .catsec:first-of-type{page-break-before:auto}
+    #toc{page-break-after:always;border:none;border-radius:0;padding:0 0 12pt}
+    #toc ol{columns:2}
+    .qquick,.qfull{page-break-inside:avoid}
+    .qfull{page-break-inside:auto}
+    .qfull .qq{page-break-inside:avoid}
+    .cathead{page-break-after:avoid}
+    a{color:inherit;text-decoration:none}
+    /* 打印时尽量保留浅色块 */
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+
+<!-- 打印页眉/页脚 -->
+<div id="pheader">邓凡 · Java 游戏服务器面试速览</div>
+<div id="pfooter">邓凡 · Java 游戏服务器面试速览 · 共 <span id="tq2"></span> 题</div>
+
+<!-- 屏幕控制面板 -->
+<div id="panel">
+  <h1>🖨️ 邓凡 · Java 游戏服务器面试速览（打印版）</h1>
+  <div class="sub">候场速览 / 打印手册两用 · Ctrl+P 打印或另存为 PDF</div>
+  <div class="row">
+    <div class="seg">
+      <button id="vQuick" class="on">⚡ 速览版</button>
+      <button id="vFull">📖 完整版</button>
+    </div>
+    <span style="font-size:12px;color:var(--muted)">难度：</span>
+    <span class="chip on" data-lv="1">基础必会</span>
+    <span class="chip on" data-lv="2">进阶高频</span>
+    <span class="chip on" data-lv="3">深挖架构</span>
+    <span style="font-size:12px;color:var(--muted)">分类：</span>
+    <span class="chip" id="selAll">全选</span>
+    <span class="chip" id="selNone">全不选</span>
+    <span id="stat" style="margin-left:auto;font-size:12px;color:var(--muted)"></span>
+  </div>
+  <div id="catsel"></div>
+  <div class="hint">💡 打印建议：目标打印机选「另存为 PDF」；边距选「默认」；勾选「背景图形」可保留浅色考点/记忆块；页码可在浏览器打印对话框勾选「页眉和页脚」获得。</div>
+</div>
+
+<div id="doc">
+  <div id="toc"></div>
+  <div id="content"></div>
+</div>
+
+<script src="data/java-basic.js"></script>
+<script src="data/java-concurrent.js"></script>
+<script src="data/jvm.js"></script>
+<script src="data/mysql.js"></script>
+<script src="data/redis.js"></script>
+<script src="data/spring.js"></script>
+<script src="data/netty.js"></script>
+<script src="data/linux.js"></script>
+<script src="data/mq.js"></script>
+<script src="data/microservice.js"></script>
+<script src="data/design-pattern.js"></script>
+<script src="data/algorithm.js"></script>
+<script src="data/game-server.js"></script>
+<script src="data/resume-deepdive.js"></script>
+<script src="data/scenario.js"></script>
+<script src="data/study-methods.js"></script>
+<script src="data/memory.js"></script>
+<script>
+const ORDER = ["study-methods","memory","java-basic","java-concurrent","jvm","mysql","redis","spring","design-pattern","netty","linux","mq","microservice","algorithm","game-server","scenario","resume-deepdive"];
+const LEVELS = {1:"基础必会",2:"进阶高频",3:"深挖架构"};
+let view = "quick";                       // quick | full
+const lvOn = {1:true, 2:true, 3:true};    // 难度筛选
+const catOn = {};                         // 分类勾选
+ORDER.forEach(id=>catOn[id]=true);
+
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function cats(){ return ORDER.map(id=>window.QB[id]).filter(Boolean); }
+function shown(c){ return c.questions.filter(q=>lvOn[q.level]); }
+
+/* ---- 目录 ---- */
+function renderToc(){
+  const cs = cats().filter(c=>catOn[c.id]);
+  const items = cs.map(c=>`<li><a href="#cat-${c.id}">${c.icon||"📘"} ${esc(c.name)}</a> <span class="tc">${shown(c).length} 题</span></li>`).join("");
+  const total = cs.reduce((n,c)=>n+shown(c).length,0);
+  document.getElementById("toc").innerHTML =
+    `<h2>📑 分类目录 <span class="tc" style="font-weight:400">（共 ${cs.length} 个分类 · ${total} 题 · ${view==="quick"?"速览版":"完整版"}）</span></h2><ol>${items}</ol>`;
+  document.getElementById("tq2").textContent = total;
+}
+
+/* ---- 正文 ---- */
+function quickCard(q){
+  return `<div class="qquick">
+    <div class="qq"><span class="no">${esc(q.id)}</span><span class="qt">${esc(q.q)}</span><span class="lv lv${q.level}">${LEVELS[q.level]||""}</span></div>
+    ${q.point?`<div class="pm pt"><span class="lbl">🎯 考点</span><span>${esc(q.point)}</span></div>`:""}
+    ${q.memory?`<div class="pm mm"><span class="lbl">🧠</span><span>${esc(q.memory)}</span></div>`:""}
+  </div>`;
+}
+function fullCard(q){
+  return `<div class="qfull">
+    <div class="qq"><span class="no">${esc(q.id)}</span><span class="qt">${esc(q.q)}</span><span class="lv lv${q.level}">${LEVELS[q.level]||""}</span></div>
+    ${q.point?`<div class="pointline">🎯 考点：${esc(q.point)}</div>`:""}
+    ${q.approach?`<div class="sec"><div class="st">🧭 回答思路</div><div class="sc approachbox">${esc(q.approach)}</div></div>`:""}
+    <div class="sec"><div class="st">📖 参考答案</div><div class="sc">${esc(q.a)}</div></div>
+    ${q.followups&&q.followups.length?`<div class="sec"><div class="st">🔥 举一反三 · 面试官可能继续深挖</div><ul class="fu">${q.followups.map(f=>typeof f==="object"
+      ?`<li><span class="fuq">Q：${esc(f.q)}</span><br><span class="fua">A：${esc(f.a)}</span></li>`
+      :`<li>${esc(f)}</li>`).join("")}</ul></div>`:""}
+    ${q.memory?`<div class="sec"><div class="st">🧠 记忆钩子</div><div class="memobox">${esc(q.memory)}</div></div>`:""}
+    ${(q.tags&&q.tags.length)?`<div class="tagsline">${q.tags.map(t=>`<span class="tag">#${esc(t)}</span>`).join("")}</div>`:""}
+  </div>`;
+}
+function renderContent(){
+  const cs = cats().filter(c=>catOn[c.id]);
+  const card = view==="quick"? quickCard : fullCard;
+  document.getElementById("content").innerHTML = cs.length? cs.map(c=>{
+    const list = shown(c);
+    if(!list.length) return "";
+    return `<section class="catsec" id="cat-${c.id}">
+      <div class="cathead"><h2>${c.icon||"📘"} ${esc(c.name)}<span class="cc">${list.length} 题</span></h2><p>${esc(c.desc||"")}</p></div>
+      ${list.map(card).join("")}
+    </section>`;
+  }).join("") : `<div id="empty">没有选中任何分类或难度，请先在顶部勾选打印范围</div>`;
+  const total = cs.reduce((n,c)=>n+shown(c).length,0);
+  document.getElementById("stat").textContent = `将打印 ${total} 题`;
+}
+
+/* ---- 分类勾选 ---- */
+function renderCatsel(){
+  document.getElementById("catsel").innerHTML = cats().map(c=>
+    `<label class="${catOn[c.id]?"on":""}" data-id="${c.id}"><input type="checkbox" ${catOn[c.id]?"checked":""}>${c.icon||"📘"} ${esc(c.name)}</label>`
+  ).join("");
+  document.querySelectorAll("#catsel label").forEach(el=>el.onclick=()=>{
+    catOn[el.dataset.id]=!catOn[el.dataset.id]; renderAll();
+  });
+}
+
+function renderAll(){ renderCatsel(); renderToc(); renderContent(); }
+
+/* ---- 事件 ---- */
+document.getElementById("vQuick").onclick=()=>{view="quick";
+  document.getElementById("vQuick").classList.add("on");document.getElementById("vFull").classList.remove("on");renderAll();};
+document.getElementById("vFull").onclick=()=>{view="full";
+  document.getElementById("vFull").classList.add("on");document.getElementById("vQuick").classList.remove("on");renderAll();};
+document.querySelectorAll("#panel .chip[data-lv]").forEach(el=>el.onclick=()=>{
+  const lv=+el.dataset.lv; lvOn[lv]=!lvOn[lv]; el.classList.toggle("on",lvOn[lv]); renderToc(); renderContent();
+});
+document.getElementById("selAll").onclick=()=>{ORDER.forEach(id=>catOn[id]=true);renderAll();};
+document.getElementById("selNone").onclick=()=>{ORDER.forEach(id=>catOn[id]=false);renderAll();};
+
+renderAll();
+</script>
+</body>
+</html>

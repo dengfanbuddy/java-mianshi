@@ -1,0 +1,9 @@
+{
+  "name": "java-game-interview-bank",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Java 游戏服务器面试题库（邓凡简历定制版）",
+  "scripts": {
+    "dev": "node serve.js"
+  }
+}

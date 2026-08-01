@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#b0713c">
+<meta name="description" content="针对邓凡简历定制的Java游戏服务器面试复习题库，554道题，含答案、追问、记忆钩子、自测模式、间隔重复。">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Java面试">
+<title>Java 游戏服务器面试题库 · 邓凡专属复习版</title>
+<style>
+  :root{
+    --bg:#faf7f2; --panel:#ffffff; --ink:#2e2a26; --muted:#8a8178;
+    --accent:#b0713c; --accent-soft:#f3e6d8; --line:#e8e0d5;
+    --lv1:#5e8c61; --lv2:#b0713c; --lv3:#a34a4a;
+    --done:#5e8c61;
+    --hl:#ffe066; --hl-ink:inherit;
+    --lv1-bg:#e5efe4; --lv3-bg:#f5e2e0;
+    --card-done-border:#cfdcc9; --card-done-bg:#fbfdfa;
+    --point-bg:#eef3ec; --point-ink:#41584a;
+    --approach-bg:#f6f1ea; --approach-border:#d8c9b4;
+    --memo-ink:#6b4a2a; --body-ink:#3d3833; --fu-ink:#4a443e; --fua-ink:#6a6156;
+    --scrollbar:#d8cfc2; --overlay:rgba(46,42,38,.35); --shadow:rgba(0,0,0,.08);
+  }
+  [data-theme="dark"]{
+    --bg:#1a1816; --panel:#252220; --ink:#e0d8cf; --muted:#8a8076;
+    --accent:#c8895a; --accent-soft:#3a2f26; --line:#3a342e;
+    --lv1:#7ab87e; --lv2:#c8895a; --lv3:#c97070;
+    --done:#7ab87e;
+    --hl:#665500; --hl-ink:#ffe066;
+    --lv1-bg:#2a3a2c; --lv3-bg:#3a2a28;
+    --card-done-border:#3a4a36; --card-done-bg:#1f2520;
+    --point-bg:#1f2a20; --point-ink:#8eb89a;
+    --approach-bg:#2a2520; --approach-border:#4a3f34;
+    --memo-ink:#c8a572; --body-ink:#d0c8bf; --fu-ink:#c5bcb0; --fua-ink:#9a9085;
+    --scrollbar:#4a423a; --overlay:rgba(0,0,0,.5); --shadow:rgba(0,0,0,.3);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;background:var(--bg);color:var(--ink);height:100vh;overflow:hidden}
+  #app{display:flex;height:100vh}
+
+  /* iOS 安全区适配 */
+  #menuBtn{top:calc(10px + env(safe-area-inset-top))}
+
+  /* 左侧栏 */
+  #sidebar{width:280px;min-width:280px;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;transition:width .2s ease,min-width .2s ease,border-color .2s ease}
+  #sidebar.collapsed{width:0;min-width:0;overflow:hidden;border-right:none}
+  #sidebar header{padding:18px 18px 12px;border-bottom:1px solid var(--line)}
+  #sidebar h1{font-size:16px;color:var(--accent);letter-spacing:.5px;line-height:1.4}
+  #sidebar .sub{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.5}
+  #search{padding:12px 14px 6px}
+  #search input{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:13px;outline:none}
+  #search input:focus{border-color:var(--accent)}
+  #scopeLbl{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);padding:0 16px 10px;cursor:pointer;user-select:none}
+  #scopeLbl input{accent-color:var(--accent)}
+
+  /* 底部收纳区 */
+  #sideFoot{position:relative;border-top:1px solid var(--line);padding:10px 12px 12px;display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+  .footbtn{display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--bg);font-size:13px;cursor:pointer;color:var(--ink);transition:background .15s}
+  .footbtn:hover{background:var(--accent-soft)}
+  .footbtn.active{background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}
+  .footbtn .badge{margin-left:auto;font-size:11px;background:var(--accent);color:#fff;border-radius:10px;padding:1px 8px;min-width:22px;text-align:center}
+  .footbtn .badge.zero{background:#c9c0b4}
+
+  /* 收纳浮层面板：从底部按钮向上弹出 */
+  #tools,#helpBox{position:absolute;left:12px;right:12px;bottom:calc(100% + 8px);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px;box-shadow:0 -6px 20px var(--shadow);display:flex;flex-direction:column;gap:5px;z-index:30}
+  #tools.hidden,#helpBox.hidden{display:none}
+  .tool{display:flex;align-items:center;gap:8px;padding:8px 11px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:13px;cursor:pointer;color:var(--ink);transition:background .15s}
+  .tool:hover{background:var(--accent-soft)}
+  .tool.active{background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}
+  .tool .badge{margin-left:auto;font-size:11px;background:var(--accent);color:#fff;border-radius:10px;padding:1px 8px;min-width:22px;text-align:center}
+  .tool .badge.zero{background:#c9c0b4}
+  #helpBox{font-size:12px;color:var(--muted);line-height:1.9;padding:12px 14px}
+  #helpBox b{color:var(--accent)}
+  #helpBox .hp{display:flex;gap:6px;align-items:flex-start}
+  #helpBox .hp+.hp{margin-top:8px}
+
+  #cats{flex:1;overflow-y:auto;padding:8px 10px 16px}
+  .cat{display:flex;align-items:center;gap:9px;padding:10px 10px;border-radius:9px;cursor:pointer;margin-bottom:2px;transition:background .15s}
+  .cat:hover{background:var(--accent-soft)}
+  .cat.active{background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}
+  .cat .ico{font-size:17px}
+  .cat .nm{font-size:14px;flex:1}
+  .cat .cnt{font-size:11px;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:1px 8px}
+  .cat .bar{height:3px;border-radius:2px;background:var(--line);margin-top:5px;overflow:hidden}
+  .cat .bar i{display:block;height:100%;background:var(--done);width:0%}
+  #overall{padding:12px 16px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+  #overall .bar{height:6px;border-radius:3px;background:var(--line);margin-top:6px;overflow:hidden}
+  #overall .bar i{display:block;height:100%;background:var(--done);width:0%}
+
+  /* 右侧 */
+  #main{flex:1;overflow-y:auto;padding:calc(26px + env(safe-area-inset-top)) 34px calc(80px + env(safe-area-inset-bottom))}
+  #cathead{margin-bottom:18px}
+  #cathead h2{font-size:22px;display:flex;align-items:center;gap:10px}
+  #cathead p{color:var(--muted);font-size:13px;margin-top:8px;line-height:1.7}
+  #filters{display:flex;gap:8px;margin:14px 0 20px;flex-wrap:wrap;align-items:center}
+  .chip{padding:5px 14px;border-radius:16px;border:1px solid var(--line);background:var(--panel);font-size:12.5px;cursor:pointer;color:var(--muted)}
+  .chip.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  #statsline{font-size:12px;color:var(--muted);margin-left:auto}
+
+  .qcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-bottom:14px;overflow:hidden}
+  .qcard.done{border-color:var(--card-done-border);background:var(--card-done-bg)}
+  .qhead{display:flex;align-items:flex-start;gap:12px;padding:15px 18px;cursor:pointer}
+  .qhead .no{font-size:11px;color:var(--muted);padding-top:3px;min-width:44px}
+  .qhead .qt{flex:1;font-size:15px;font-weight:600;line-height:1.55}
+  .catbadge{display:inline-block;font-size:11px;font-weight:400;color:var(--accent);background:var(--accent-soft);border-radius:8px;padding:1px 7px;margin-right:7px}
+  .lv{font-size:11px;padding:2px 9px;border-radius:10px;white-space:nowrap;margin-top:2px}
+  .lv1{background:var(--lv1-bg);color:var(--lv1)} .lv2{background:var(--accent-soft);color:var(--lv2)} .lv3{background:var(--lv3-bg);color:var(--lv3)}
+  .qbody{display:none;padding:0 20px 18px 74px}
+  .qcard.open .qbody{display:block}
+  .sec{margin-top:12px}
+  .sec .st{font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px;letter-spacing:1px}
+  .sec .sc{font-size:13.5px;line-height:1.85;white-space:pre-wrap;color:var(--body-ink)}
+  .fu li{font-size:13px;line-height:1.8;margin-left:18px;color:var(--fu-ink);margin-bottom:8px}
+  .fu .fuq{font-weight:600;color:var(--body-ink)}
+  .fu .fua{color:var(--fua-ink)}
+  .pointline{margin-top:2px;background:var(--point-bg);border-left:3px solid var(--lv1);border-radius:0 8px 8px 0;padding:8px 13px;font-size:13px;line-height:1.7;color:var(--point-ink)}
+  .approachbox{background:var(--approach-bg);border:1px dashed var(--approach-border);border-radius:8px;padding:9px 13px}
+  .memobox{background:var(--accent-soft);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:9px 13px;font-size:13px;line-height:1.7;color:var(--memo-ink)}
+  .tagsline{margin-top:12px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  .tag{font-size:11px;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:1px 8px}
+  .donebtn{margin-left:auto;font-size:12px;padding:4px 12px;border-radius:14px;border:1px solid var(--line);background:var(--panel);cursor:pointer;color:var(--muted)}
+  .donebtn.on{background:var(--done);color:#fff;border-color:var(--done)}
+  .wrbtn,.rvbtn{font-size:12px;padding:4px 12px;border-radius:14px;border:1px solid var(--line);background:var(--panel);cursor:pointer;color:var(--muted)}
+  .wrbtn:hover{border-color:var(--lv3);color:var(--lv3)}
+  .rvbtn:hover{border-color:var(--done);color:var(--done)}
+  #empty{color:var(--muted);text-align:center;padding:60px 0;font-size:14px}
+
+  /* 自测模式 */
+  .quizbox .qprog{font-size:13px;color:var(--muted);margin-bottom:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .quizctl{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;align-items:center}
+  .qbtn{padding:11px 22px;border-radius:10px;border:1px solid var(--line);background:var(--panel);font-size:15px;cursor:pointer;color:var(--ink);transition:transform .08s}
+  .qbtn:active{transform:scale(.97)}
+  .qbtn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .qbtn.g1{background:var(--lv1-bg);border-color:var(--card-done-border);color:var(--lv1);font-weight:600}
+  .qbtn.g2{background:var(--accent-soft);border-color:var(--approach-border);color:var(--lv2);font-weight:600}
+  .qbtn.g3{background:var(--lv3-bg);border-color:var(--lv3);color:var(--lv3);font-weight:600;opacity:.8}
+  .qbtn.sel{outline:2px solid currentColor;outline-offset:-2px}
+  .qhint{font-size:12px;color:var(--muted)}
+  .quizend{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:36px 28px;text-align:center}
+  .quizend .big{font-size:42px;margin-bottom:8px}
+  .quizend h3{font-size:19px;margin-bottom:14px;color:var(--accent)}
+  .quizend .stat{display:flex;justify-content:center;gap:26px;margin:16px 0 24px;font-size:14px;color:var(--muted);flex-wrap:wrap}
+  .quizend .stat b{display:block;font-size:24px;color:var(--ink)}
+
+  /* 搜索高亮 */
+  mark{background:var(--hl);color:var(--hl-ink);border-radius:2px;padding:0 1px}
+
+  /* 主题切换 */
+  #themeToggle{cursor:pointer;font-size:16px;padding:4px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);transition:background .15s;line-height:1}
+  #themeToggle:hover{background:var(--accent-soft)}
+  #sidebar header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+  #sidebar header>div:first-child{flex:1}
+
+  /* 备份恢复 */
+  .tool.importover{flex-direction:column;align-items:flex-start;gap:4px;font-size:12px;color:var(--muted);line-height:1.5}
+
+  /* 统计看板 */
+  .dashgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-bottom:16px}
+  .dashcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+  .dashcard h3{font-size:14px;color:var(--accent);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+  .dashrow{display:flex;align-items:center;gap:10px;margin-bottom:7px;font-size:12.5px}
+  .dashrow .lbl{width:130px;flex-shrink:0;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .dashrow .track{flex:1;height:7px;border-radius:4px;background:var(--bg);overflow:hidden}
+  .dashrow .track i{display:block;height:100%;border-radius:4px}
+  .dashrow .val{width:52px;text-align:right;font-size:11px;color:var(--muted);flex-shrink:0}
+  .donut-wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .donut{width:130px;height:130px;flex-shrink:0}
+  .donut-legend{font-size:13px;line-height:2}
+  .donut-legend .dot{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:middle}
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:16px}
+  .stat-box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center}
+  .stat-box .num{font-size:28px;font-weight:700;color:var(--accent)}
+  .stat-box .lbl{font-size:12px;color:var(--muted);margin-top:4px}
+  .lv-pie{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .lv-pie svg{flex-shrink:0}
+
+  /* 移动端 / 侧栏收起时的展开按钮 */
+  #menuBtn{display:none;position:fixed;top:10px;left:10px;z-index:60;width:42px;height:42px;border-radius:10px;border:1px solid var(--line);background:var(--panel);font-size:19px;cursor:pointer;align-items:center;justify-content:center;color:var(--accent);box-shadow:0 2px 8px var(--shadow)}
+  body.side-collapsed #menuBtn{display:flex}
+  #mask{display:none;position:fixed;inset:0;background:var(--overlay);z-index:49}
+
+  ::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:var(--scrollbar);border-radius:4px}
+  @media(max-width:820px){
+    #sidebar{position:fixed;top:0;left:0;bottom:0;z-index:50;width:272px;min-width:272px;transform:translateX(-105%);transition:transform .25s ease;box-shadow:4px 0 18px rgba(0,0,0,.15)}
+    #sidebar.open{transform:none}
+    #mask.show{display:block}
+    #menuBtn{display:flex}
+    #main{padding:calc(60px + env(safe-area-inset-top)) 14px calc(90px + env(safe-area-inset-bottom))}
+    .qbody{padding:0 14px 16px 14px}
+    .qbtn{padding:15px 26px;font-size:16px;flex:1;min-width:120px}
+    .quizctl{gap:8px}
+  }
+</style>
+</head>
+<body>
+<button id="menuBtn" title="菜单">☰</button>
+<div id="mask"></div>
+<input type="file" id="restoreFile" accept=".json" style="display:none">
+<div id="app">
+  <aside id="sidebar">
+    <header>
+      <div>
+        <h1>🎮 Java 游戏服务器面试题库</h1>
+        <div class="sub">针对邓凡简历定制 · 循序渐进 · 举一反三</div>
+      </div>
+      <button id="themeToggle" title="切换深色/浅色模式">🌙</button>
+    </header>
+    <div id="search"><input id="q" type="text" placeholder="🔍 搜索题目 / 答案 / 标签…"></div>
+    <label id="scopeLbl"><input type="checkbox" id="scopeAll" checked> 全部范围（跨分类搜索）</label>
+    <nav id="cats"></nav>
+    <div id="overall"></div>
+    <div id="sideFoot">
+      <div id="tools" class="hidden">
+        <div class="tool" id="tQuiz">🎯 自测模式</div>
+        <div class="tool" id="tDue">📅 今日到期复习<span class="badge zero" id="dueCnt">0</span></div>
+        <div class="tool" id="tWrong">📕 错题本<span class="badge zero" id="wrongCnt">0</span></div>
+        <div class="tool" id="tDash">📊 统计看板</div>
+        <div class="tool" id="tBackup">💾 备份进度</div>
+        <div class="tool" id="tRestore">📥 恢复进度</div>
+      </div>
+      <div id="helpBox" class="hidden">
+        <div class="hp"><span>⌨️</span><span><b>/</b> 聚焦搜索 · 自测中 <b>空格</b> 显示答案/下一题 · <b>1/2/3</b> 会/模糊/不会</span></div>
+        <div class="hp"><span>💡</span><span>点击卡片展开答案，先"主动回忆"自答再对照；掌握后按 1/3/7/15 天节奏复习更牢</span></div>
+        <div class="hp"><span>🛠️</span><span>功能：📊 统计看板 · 💾 备份/📥 恢复 · 🌙 深色模式 · 搜索自动高亮</span></div>
+      </div>
+      <button class="footbtn" id="moreBtn" title="展开更多功能">🗂 更多功能<span class="badge" id="moreCnt" style="visibility:hidden">0</span></button>
+      <button class="footbtn" id="helpBtn" title="帮助与快捷键提示">❓ 帮助提示</button>
+      <button class="footbtn" id="collapseBtn" title="收起侧边栏">⏪ 收起侧栏</button>
+    </div>
+  </aside>
+  <main id="main">
+    <div id="cathead"></div>
+    <div id="filters"></div>
+    <div id="list"></div>
+  </main>
+</div>
+
+<script src="data/java-basic.js"></script>
+<script src="data/java-concurrent.js"></script>
+<script src="data/jvm.js"></script>
+<script src="data/mysql.js"></script>
+<script src="data/redis.js"></script>
+<script src="data/spring.js"></script>
+<script src="data/netty.js"></script>
+<script src="data/linux.js"></script>
+<script src="data/mq.js"></script>
+<script src="data/microservice.js"></script>
+<script src="data/design-pattern.js"></script>
+<script src="data/algorithm.js"></script>
+<script src="data/game-server.js"></script>
+<script src="data/resume-deepdive.js"></script>
+<script src="data/scenario.js"></script>
+<script src="data/study-methods.js"></script>
+<script src="data/memory.js"></script>
+<script src="data/ai-app.js"></script>
+<script>
+const ORDER = ["study-methods","memory","java-basic","java-concurrent","jvm","mysql","redis","spring","design-pattern","netty","linux","mq","microservice","algorithm","game-server","scenario","resume-deepdive","ai-app"];
+const LEVELS = {1:"基础必会",2:"进阶高频",3:"深挖架构"};
+const INTERVALS = [1,3,7,15]; // 间隔重复节奏（天）
+const store = {
+  get done(){ try{return JSON.parse(localStorage.getItem("qb_done")||"{}")}catch(e){return{}} },
+  set done(v){ localStorage.setItem("qb_done", JSON.stringify(v)) },
+  get doneTS(){ try{return JSON.parse(localStorage.getItem("qb_done_ts")||"{}")}catch(e){return{}} },
+  set doneTS(v){ localStorage.setItem("qb_done_ts", JSON.stringify(v)) },
+  get wrong(){ try{return JSON.parse(localStorage.getItem("qb_wrong")||"{}")}catch(e){return{}} },
+  set wrong(v){ localStorage.setItem("qb_wrong", JSON.stringify(v)) },
+  get review(){ try{return JSON.parse(localStorage.getItem("qb_review")||"{}")}catch(e){return{}} },
+  set review(v){ localStorage.setItem("qb_review", JSON.stringify(v)) }
+};
+let curCat = localStorage.getItem("qb_cat") || "memory";
+let curLv = 0, kw = "";
+let view = "cat";                 // cat | wrong | due | quiz
+let scopeAll = localStorage.getItem("qb_scope") !== "0";
+let quiz = null;
+
+// 兼容旧数据：已有 qb_done 但无时间戳的，补当前时间
+(function(){
+  const d = store.done, t = store.doneTS; let changed = false;
+  for(const id in d) if(d[id] && !t[id]){ t[id] = Date.now(); changed = true; }
+  if(changed) store.doneTS = t;
+})();
+
+/* ---- 主题切换 ---- */
+const themeBtn = document.getElementById("themeToggle");
+function applyTheme(t){
+  document.documentElement.dataset.theme = t;
+  themeBtn.textContent = t === "dark" ? "☀️" : "🌙";
+  localStorage.setItem("qb_theme", t);
+}
+applyTheme(localStorage.getItem("qb_theme") || "light");
+themeBtn.onclick = () => applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
+
+/* ---- 搜索高亮 ---- */
+function hl(s, keyword){
+  s = esc(s);
+  if(!keyword) return s;
+  const kw = esc(keyword).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return s.replace(new RegExp(kw, "gi"), m => `<mark>${m}</mark>`);
+}
+
+const catsEl = document.getElementById("cats"), main = document.getElementById("list");
+const qInput = document.getElementById("q"), scopeBox = document.getElementById("scopeAll");
+scopeBox.checked = scopeAll;
+
+function cats(){ return ORDER.map(id=>window.QB[id]).filter(Boolean); }
+function esc(s){return String(s??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function findQ(id){
+  for(const c of cats()){ const q = c.questions.find(x=>x.id===id); if(q) return {q, cat:c.id, catName:c.name}; }
+  return null;
+}
+function matchKw(q, k){
+  return ((q.q+q.a+(q.point||"")+(q.approach||"")+(q.tags||[]).join("")+(q.followups||[]).map(f=>typeof f==="object"?(f.q+f.a):f).join("")).toLowerCase().includes(k));
+}
+
+/* ---- 状态操作 ---- */
+function setDone(id, on){
+  const d = store.done, t = store.doneTS, w = store.wrong, r = store.review;
+  if(on){ d[id] = true; t[id] = Date.now(); delete w[id]; }   // 掌握时重置复习计时，并自动移出错题本
+  else { delete d[id]; delete t[id]; delete r[id]; }
+  store.done = d; store.doneTS = t; store.wrong = w; store.review = r;
+}
+function addWrong(q, catId){
+  const w = store.wrong;
+  w[q.id] = {cat:catId, ts:Date.now(), level:q.level};
+  store.wrong = w;
+}
+function removeWrong(id){
+  const w = store.wrong; delete w[id]; store.wrong = w;
+}
+function stageOf(id){
+  const t = store.doneTS[id]; if(!t) return 0;
+  const days = (Date.now()-t)/864e5;
+  let s = 0; for(const iv of INTERVALS) if(days>=iv) s++;
+  return s;
+}
+function dueList(){
+  const d = store.done, r = store.review, out = [];
+  for(const id in d){
+    if(!d[id]) continue;
+    const st = stageOf(id);
+    if(st>0 && st>(r[id]||0)){
+      const f = findQ(id);
+      if(f) out.push({q:f.q, cat:f.cat, catName:f.catName, stage:st});
+    }
+  }
+  return out;
+}
+function markReviewed(id, stage){
+  const r = store.review; r[id] = stage; store.review = r;
+}
+
+/* ---- 卡片渲染 ---- */
+function qbodyHTML(q, extraBtn){
+  const done = store.done, k = kw.trim();
+  return `
+    ${q.point?`<div class="pointline">🎯 考点：${hl(q.point,k)}</div>`:""}
+    ${q.approach?`<div class="sec"><div class="st">🧭 回答思路</div><div class="sc approachbox">${hl(q.approach,k)}</div></div>`:""}
+    <div class="sec"><div class="st">📖 参考答案</div><div class="sc">${hl(q.a,k)}</div></div>
+    ${q.followups&&q.followups.length?`<div class="sec"><div class="st">🔥 举一反三 · 面试官可能继续深挖</div><ul class="fu">${q.followups.map(f=>typeof f==="object"
+      ?`<li><span class="fuq">Q：${hl(f.q,k)}</span><br><span class="fua">A：${hl(f.a,k)}</span></li>`
+      :`<li>${hl(f,k)}</li>`).join("")}</ul></div>`:""}
+    ${q.memory?`<div class="sec"><div class="st">🧠 记忆钩子</div><div class="memobox">${hl(q.memory,k)}</div></div>`:""}
+    <div class="tagsline">
+      ${(q.tags||[]).map(t=>`<span class="tag">#${hl(t,k)}</span>`).join("")}
+      ${extraBtn||""}
+      <button class="donebtn ${done[q.id]?'on':''}" data-id="${q.id}">${done[q.id]?"✓ 已掌握":"标记掌握"}</button>
+    </div>`;
+}
+function qcardHTML(q, opts){
+  opts = opts||{};
+  const done = store.done, k = kw.trim();
+  return `
+    <div class="qcard ${done[q.id]?'done':''}" data-id="${q.id}">
+      <div class="qhead">
+        <span class="no">${q.id}</span>
+        <span class="qt">${opts.catName?`<span class="catbadge">${esc(opts.catName)}</span>`:""}${hl(q.q,k)}</span>
+        <span class="lv lv${q.level}">${LEVELS[q.level]||""}</span>
+      </div>
+      <div class="qbody">${qbodyHTML(q, opts.extraBtn||"")}</div>
+    </div>`;
+}
+function bindCards(){
+  main.querySelectorAll(".qhead").forEach(h=>h.onclick=()=>h.parentElement.classList.toggle("open"));
+  main.querySelectorAll(".donebtn").forEach(b=>b.onclick=e=>{
+    e.stopPropagation();
+    setDone(b.dataset.id, !store.done[b.dataset.id]);
+    renderAll();
+  });
+  main.querySelectorAll(".wrbtn").forEach(b=>b.onclick=e=>{
+    e.stopPropagation();
+    removeWrong(b.dataset.id);
+    renderAll();
+  });
+  main.querySelectorAll(".rvbtn").forEach(b=>b.onclick=e=>{
+    e.stopPropagation();
+    markReviewed(b.dataset.id, +b.dataset.stage);
+    renderAll();
+  });
+}
+
+/* ---- 筛选条 ---- */
+function renderFilters(shown, total, opts){
+  opts = opts||{};
+  document.getElementById("filters").innerHTML =
+    `<span class="chip ${curLv===0?'on':''}" data-lv="0">全部</span>` +
+    [1,2,3].map(l=>`<span class="chip ${curLv===l?'on':''}" data-lv="${l}">${LEVELS[l]}</span>`).join("") +
+    (opts.quizBtn?`<span class="chip" id="quizStart">🎯 自测本范围</span>`:"") +
+    `<span class="chip" id="expandAll">展开全部</span><span class="chip" id="collapseAll">收起全部</span>` +
+    `<span id="statsline">显示 ${shown} / ${total} 题</span>`;
+  document.querySelectorAll("#filters .chip[data-lv]").forEach(el=>el.onclick=()=>{curLv=+el.dataset.lv;renderMain();});
+  document.getElementById("expandAll").onclick=()=>{document.querySelectorAll(".qcard").forEach(e=>e.classList.add("open"));};
+  document.getElementById("collapseAll").onclick=()=>{document.querySelectorAll(".qcard").forEach(e=>e.classList.remove("open"));};
+  if(opts.quizBtn) document.getElementById("quizStart").onclick=startQuiz;
+}
+
+/* ---- 各视图 ---- */
+function renderCat(){
+  const c = window.QB[curCat]; if(!c) return;
+  document.getElementById("cathead").innerHTML = `<h2>${c.icon||"📘"} ${c.name}</h2><p>${c.desc||""}</p>`;
+  const k = kw.trim().toLowerCase();
+  const list = c.questions.filter(q=>{
+    if(curLv && q.level!==curLv) return false;
+    if(k && !matchKw(q,k)) return false;
+    return true;
+  });
+  renderFilters(list.length, c.questions.length, {quizBtn:true});
+  main.innerHTML = list.length? list.map(q=>qcardHTML(q)).join("")
+    : `<div id="empty">没有匹配的题目，换个关键词或难度试试</div>`;
+  bindCards();
+}
+
+function renderGlobal(k){
+  document.getElementById("cathead").innerHTML =
+    `<h2>🔍 全局搜索结果</h2><p>关键词「${esc(kw.trim())}」· 跨所有分类匹配（点击左侧分类可返回单分类视图）</p>`;
+  let total = 0;
+  const rows = [];
+  cats().forEach(c=>{
+    c.questions.forEach(q=>{
+      if(curLv && q.level!==curLv) return;
+      if(matchKw(q,k)) rows.push({q, catName:c.name});
+    });
+    total += c.questions.length;
+  });
+  renderFilters(rows.length, total, {});
+  main.innerHTML = rows.length? rows.map(r=>qcardHTML(r.q,{catName:r.catName})).join("")
+    : `<div id="empty">所有分类中都没有匹配「${esc(kw.trim())}」的题目</div>`;
+  bindCards();
+}
+
+function renderWrong(){
+  const w = store.wrong;
+  const rows = Object.keys(w).map(id=>{
+    const f = findQ(id);
+    return f? {q:f.q, catName:f.catName, ts:w[id].ts} : null;
+  }).filter(Boolean).sort((a,b)=>b.ts-a.ts);
+  const list = rows.filter(r=>!curLv || r.q.level===curLv);
+  document.getElementById("cathead").innerHTML =
+    `<h2>📕 错题本</h2><p>自测中标记「模糊 / 不会」的题目会自动收录到这里。掌握某题后会自动移出。</p>`;
+  renderFilters(list.length, rows.length, {});
+  main.innerHTML = list.length? list.map(r=>
+    qcardHTML(r.q,{catName:r.catName, extraBtn:`<button class="wrbtn" data-id="${r.q.id}" style="margin-left:auto">移出错题本</button>`})
+      .replace('class="donebtn','style="margin-left:0" class="donebtn')
+  ).join("") : `<div id="empty">错题本空空如也，去自测模式练练手吧 🎯</div>`;
+  bindCards();
+}
+
+function renderDue(){
+  const due = dueList();
+  const list = due.filter(r=>!curLv || r.q.level===curLv);
+  document.getElementById("cathead").innerHTML =
+    `<h2>📅 今日到期复习</h2><p>按 1 / 3 / 7 / 15 天间隔重复节奏，以下掌握过的题目到了该回忆的时候。点「✓ 已复习」进入下一周期。</p>`;
+  renderFilters(list.length, due.length, {});
+  main.innerHTML = list.length? list.map(r=>
+    qcardHTML(r.q,{catName:r.catName, extraBtn:`<button class="rvbtn" data-id="${r.q.id}" data-stage="${r.stage}" style="margin-left:auto">✓ 已复习（第${r.stage}轮）</button>`})
+      .replace('class="donebtn','style="margin-left:0" class="donebtn')
+  ).join("") : `<div id="empty">今天没有到期的复习任务，继续保持 🎉</div>`;
+  bindCards();
+}
+
+/* ---- 自测模式 ---- */
+function startQuiz(){
+  const c = window.QB[curCat];
+  if(!c) return;
+  let pool = c.questions.filter(q=>!curLv || q.level===curLv).map(q=>({q, cat:c.id}));
+  if(!pool.length){ alert("当前筛选范围内没有题目，换个分类或难度试试"); return; }
+  for(let i=pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
+  quiz = {
+    list:pool, idx:0, revealed:false, graded:false, pick:0,
+    results:{know:0, fuzzy:0, no:0},
+    rangeDesc:`范围：${c.icon||"📘"} ${c.name} · ${curLv?LEVELS[curLv]:"全部难度"} · 随机 ${pool.length} 题 · 空格 显示答案，1/2/3 自评`
+  };
+  view = "quiz";
+  closeMobileSidebar();
+  renderAll();
+  document.getElementById("main").scrollTop = 0;
+}
+function grade(g){
+  if(!quiz || quiz.graded) return;
+  const item = quiz.list[quiz.idx];
+  if(g===1){ setDone(item.q.id, true); quiz.results.know++; }
+  else {
+    addWrong(item.q, item.cat);
+    if(g===2) quiz.results.fuzzy++; else quiz.results.no++;
+  }
+  quiz.graded = true; quiz.pick = g;
+  renderMain();
+}
+function nextQ(){
+  quiz.idx++; quiz.revealed = false; quiz.graded = false; quiz.pick = 0;
+  renderMain();
+  document.getElementById("main").scrollTop = 0;
+}
+function renderQuiz(){
+  if(!quiz){ view = "cat"; renderMain(); return; }
+  document.getElementById("cathead").innerHTML = `<h2>🎯 自测模式</h2><p>${esc(quiz.rangeDesc)}</p>`;
+  document.getElementById("filters").innerHTML = "";
+  if(quiz.idx >= quiz.list.length){
+    const r = quiz.results, n = quiz.list.length;
+    main.innerHTML = `
+      <div class="quizend">
+        <div class="big">🏁</div>
+        <h3>本轮自测完成！</h3>
+        <div class="stat">
+          <span><b>${n}</b>总题数</span>
+          <span><b style="color:var(--lv1)">${r.know}</b>✅ 会（已计掌握）</span>
+          <span><b style="color:var(--lv2)">${r.fuzzy}</b>🤔 模糊（已入错题本）</span>
+          <span><b style="color:var(--lv3)">${r.no}</b>❌ 不会（已入错题本）</span>
+        </div>
+        <div class="quizctl" style="justify-content:center">
+          <button class="qbtn primary" id="qAgain">🔁 再来一轮</button>
+          <button class="qbtn" id="qWrong">📕 去看错题本</button>
+          <button class="qbtn" id="qExit">返回题库</button>
+        </div>
+      </div>`;
+    document.getElementById("qAgain").onclick = startQuiz;
+    document.getElementById("qWrong").onclick = ()=>{ view="wrong"; quiz=null; renderAll(); };
+    document.getElementById("qExit").onclick = ()=>{ view="cat"; quiz=null; renderAll(); };
+    renderSidebar();
+    return;
+  }
+  const item = quiz.list[quiz.idx], q = item.q;
+  const ctl = !quiz.revealed
+    ? `<button class="qbtn primary" id="qShow">👁 显示答案（空格）</button>
+       <button class="qbtn" id="qQuit">退出自测</button>`
+    : quiz.graded
+      ? `<span class="qhint">已自评 ${["","✅ 会","🤔 模糊","❌ 不会"][quiz.pick]}，该题${quiz.pick===1?"已计入掌握":"已加入错题本"}</span>
+         <button class="qbtn primary" id="qNext">下一题（空格）⏭</button>`
+      : `<button class="qbtn g1" data-g="1">✅ 会（1）</button>
+         <button class="qbtn g2" data-g="2">🤔 模糊（2）</button>
+         <button class="qbtn g3" data-g="3">❌ 不会（3）</button>`;
+  main.innerHTML = `
+    <div class="quizbox">
+      <div class="qprog">
+        <span>第 <b>${quiz.idx+1}</b> / ${quiz.list.length} 题</span>
+        <span class="lv lv${q.level}">${LEVELS[q.level]||""}</span>
+        <span style="margin-left:auto">✅${quiz.results.know} 🤔${quiz.results.fuzzy} ❌${quiz.results.no}</span>
+      </div>
+      <div class="qcard open">
+        <div class="qhead" style="cursor:default">
+          <span class="no">${q.id}</span>
+          <span class="qt">${esc(q.q)}</span>
+        </div>
+        ${quiz.revealed?`<div class="qbody" style="display:block">${qbodyHTML(q)}</div>`
+          :`<div class="qbody" style="padding:20px;color:var(--muted);font-size:13px">🤫 先在心里作答，再点击「显示答案」对照…</div>`}
+      </div>
+      <div class="quizctl">${ctl}</div>
+    </div>`;
+  const qs = document.getElementById("qShow"); if(qs) qs.onclick = ()=>{ quiz.revealed=true; renderMain(); };
+  const qq = document.getElementById("qQuit"); if(qq) qq.onclick = ()=>{ view="cat"; quiz=null; renderAll(); };
+  const qn = document.getElementById("qNext"); if(qn) qn.onclick = nextQ;
+  main.querySelectorAll(".qbtn[data-g]").forEach(b=>b.onclick=()=>grade(+b.dataset.g));
+  // 自测内也允许直接点「标记掌握」
+  main.querySelectorAll(".donebtn").forEach(b=>b.onclick=e=>{
+    e.stopPropagation();
+    setDone(b.dataset.id, !store.done[b.dataset.id]);
+    if(!quiz.graded){ quiz.graded=true; quiz.pick=1; quiz.results.know++; }
+    renderAll();
+  });
+}
+
+/* ---- 主渲染调度 ---- */
+function renderMain(){
+  if(view==="quiz"){ renderQuiz(); return; }
+  if(view==="dash"){ renderDash(); return; }
+  const k = kw.trim().toLowerCase();
+  if(view==="wrong"){ renderWrong(); return; }
+  if(view==="due"){ renderDue(); return; }
+  if(k && scopeAll){ renderGlobal(k); return; }
+  renderCat();
+}
+
+function renderSidebar(){
+  const done = store.done;
+  catsEl.innerHTML = cats().map(c=>{
+    const dn = c.questions.filter(q=>done[q.id]).length;
+    const pct = c.questions.length? Math.round(dn/c.questions.length*100):0;
+    return `<div class="cat ${c.id===curCat && view==="cat"?'active':''}" data-id="${c.id}">
+      <span class="ico">${c.icon||"📘"}</span>
+      <div style="flex:1"><div style="display:flex"><span class="nm">${c.name}</span><span class="cnt" style="margin-left:auto">${dn}/${c.questions.length}</span></div>
+      <div class="bar"><i style="width:${pct}%"></i></div></div>
+    </div>`;
+  }).join("");
+  catsEl.querySelectorAll(".cat").forEach(el=>el.onclick=()=>{
+    curCat = el.dataset.id; localStorage.setItem("qb_cat",curCat);
+    view = "cat"; quiz = null; kw = ""; qInput.value = "";
+    closeMobileSidebar();
+    renderAll();
+  });
+  const all = cats().flatMap(c=>c.questions);
+  const dn = all.filter(q=>done[q.id]).length;
+  document.getElementById("overall").innerHTML =
+    `总进度：${dn} / ${all.length} 题已标记掌握<div class="bar"><i style="width:${all.length?Math.round(dn/all.length*100):0}%"></i></div>`;
+
+  // 工具入口计数与激活态
+  const dueN = dueList().length, wrongN = Object.keys(store.wrong).length;
+  const dEl = document.getElementById("dueCnt"), wEl = document.getElementById("wrongCnt");
+  dEl.textContent = dueN; dEl.className = "badge"+(dueN?"":" zero");
+  wEl.textContent = wrongN; wEl.className = "badge"+(wrongN?"":" zero");
+  document.getElementById("tQuiz").classList.toggle("active", view==="quiz");
+  document.getElementById("tDue").classList.toggle("active", view==="due");
+  document.getElementById("tWrong").classList.toggle("active", view==="wrong");
+  document.getElementById("tDash").classList.toggle("active", view==="dash");
+
+  // 收纳角标（到期+错题汇总）与面板状态联动
+  const moreN = dueN + wrongN;
+  const mEl = document.getElementById("moreCnt");
+  mEl.textContent = moreN;
+  mEl.style.visibility = moreN ? "visible" : "hidden";
+  if(["quiz","due","wrong","dash"].includes(view)) openMore(); else closePanes();
+}
+
+/* ---- 侧栏收起 / 展开 ---- */
+const sidebarEl = document.getElementById("sidebar"), maskEl = document.getElementById("mask");
+const moreBtn = document.getElementById("moreBtn"), helpBtn = document.getElementById("helpBtn");
+const helpBox = document.getElementById("helpBox"), toolsPanel = document.getElementById("tools");
+function isMobile(){ return window.innerWidth <= 820; }
+function toggleSidebar(){
+  if(isMobile()){
+    sidebarEl.classList.toggle("open");
+    maskEl.classList.toggle("show", sidebarEl.classList.contains("open"));
+  }else{
+    const collapsed = !sidebarEl.classList.contains("collapsed");
+    sidebarEl.classList.toggle("collapsed", collapsed);
+    document.body.classList.toggle("side-collapsed", collapsed);
+    localStorage.setItem("qb_sidebar_collapsed", collapsed?"1":"0");
+  }
+}
+function syncSidebarState(){
+  if(isMobile()){
+    sidebarEl.classList.remove("collapsed");
+    document.body.classList.remove("side-collapsed");
+  }else{
+    sidebarEl.classList.remove("open"); maskEl.classList.remove("show");
+    const collapsed = localStorage.getItem("qb_sidebar_collapsed")==="1";
+    sidebarEl.classList.toggle("collapsed", collapsed);
+    document.body.classList.toggle("side-collapsed", collapsed);
+  }
+}
+window.addEventListener("resize", syncSidebarState);
+syncSidebarState();
+document.getElementById("menuBtn").onclick = toggleSidebar;
+maskEl.onclick = ()=>{ sidebarEl.classList.remove("open"); maskEl.classList.remove("show"); };
+function closeMobileSidebar(){ if(isMobile()){ sidebarEl.classList.remove("open"); maskEl.classList.remove("show"); } }
+
+/* ---- 底部收纳面板 ---- */
+function openMore(){
+  toolsPanel.classList.remove("hidden"); helpBox.classList.add("hidden");
+  moreBtn.classList.add("active"); helpBtn.classList.remove("active");
+}
+function openHelp(){
+  helpBox.classList.remove("hidden"); toolsPanel.classList.add("hidden");
+  helpBtn.classList.add("active"); moreBtn.classList.remove("active");
+}
+function closePanes(){
+  toolsPanel.classList.add("hidden"); helpBox.classList.add("hidden");
+  moreBtn.classList.remove("active"); helpBtn.classList.remove("active");
+}
+moreBtn.onclick = ()=> toolsPanel.classList.contains("hidden") ? openMore() : closePanes();
+helpBtn.onclick = ()=> helpBox.classList.contains("hidden") ? openHelp() : closePanes();
+document.getElementById("collapseBtn").onclick = toggleSidebar;
+
+/* ---- 工具入口事件 ---- */
+document.getElementById("tQuiz").onclick = startQuiz;
+document.getElementById("tWrong").onclick = ()=>{ view="wrong"; quiz=null; closeMobileSidebar(); renderAll(); };
+document.getElementById("tDue").onclick = ()=>{ view="due"; quiz=null; closeMobileSidebar(); renderAll(); };
+document.getElementById("tDash").onclick = ()=>{ view="dash"; quiz=null; closeMobileSidebar(); renderAll(); };
+document.getElementById("tBackup").onclick = backupProgress;
+document.getElementById("tRestore").onclick = ()=>document.getElementById("restoreFile").click();
+document.getElementById("restoreFile").onchange = e=>{ if(e.target.files[0]) restoreProgress(e.target.files[0]); e.target.value=""; };
+
+/* ---- 搜索 ---- */
+qInput.oninput = e=>{
+  kw = e.target.value;
+  if(view==="wrong"||view==="due"||view==="dash") view = "cat";
+  renderMain();
+};
+scopeBox.onchange = e=>{
+  scopeAll = e.target.checked;
+  localStorage.setItem("qb_scope", scopeAll?"1":"0");
+  renderMain();
+};
+
+/* ---- 键盘快捷键 ---- */
+document.addEventListener("keydown", e=>{
+  const tag = (e.target.tagName||"").toLowerCase();
+  const typing = tag==="input" || tag==="textarea";
+  if(view==="quiz" && quiz && quiz.idx<quiz.list.length){
+    if(typing) return;
+    if(e.code==="Space"){
+      e.preventDefault();
+      if(!quiz.revealed){ quiz.revealed=true; renderMain(); }
+      else if(quiz.graded){ nextQ(); }
+    } else if(quiz.revealed && !quiz.graded && (e.key==="1"||e.key==="2"||e.key==="3")){
+      grade(+e.key);
+    }
+    return;
+  }
+  if(!typing && e.key==="/"){
+    e.preventDefault();
+    if(isMobile()){ sidebarEl.classList.add("open"); maskEl.classList.add("show"); }
+    else if(sidebarEl.classList.contains("collapsed")){ toggleSidebar(); }
+    qInput.focus();
+  }
+});
+
+/* ---- 备份/恢复 ---- */
+function backupProgress(){
+  const data = {
+    version: 2,
+    exportDate: new Date().toISOString(),
+    keys: {}
+  };
+  ["qb_done","qb_done_ts","qb_wrong","qb_review","qb_cat","qb_scope","qb_theme"].forEach(k=>{
+    data.keys[k] = localStorage.getItem(k);
+  });
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  const d = new Date().toISOString().slice(0,10);
+  a.href = URL.createObjectURL(blob);
+  a.download = `interview-backup-${d}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function restoreProgress(file){
+  const reader = new FileReader();
+  reader.onload = e=>{
+    try{
+      const data = JSON.parse(e.target.result);
+      if(!data.keys) throw new Error("文件格式不正确");
+      Object.keys(data.keys).forEach(k=>{
+        if(data.keys[k] !== null) localStorage.setItem(k, data.keys[k]);
+      });
+      alert("✅ 进度恢复成功！页面将刷新以应用更改。");
+      location.reload();
+    }catch(err){
+      alert("❌ 恢复失败：" + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+/* ---- 统计看板 ---- */
+function renderDash(){
+  const done = store.done, wrong = store.wrong;
+  const all = cats().flatMap(c=>c.questions);
+  const total = all.length;
+  const dn = all.filter(q=>done[q.id]).length;
+  const wrongN = Object.keys(wrong).length;
+  const dueN = dueList().length;
+  const notDone = total - dn;
+
+  // 难度分布
+  const lvStats = [1,2,3].map(lv=>{
+    const qs = all.filter(q=>q.level===lv);
+    const d = qs.filter(q=>done[q.id]).length;
+    return {lv, total:qs.length, done:d, pct:qs.length?Math.round(d/qs.length*100):0};
+  });
+
+  // SVG donut chart (done vs not done)
+  const R=52, C=2*Math.PI*R, doneArc = total? (dn/total)*C : 0;
+  const donutSVG = `<svg class="donut" viewBox="0 0 130 130">
+    <circle cx="65" cy="65" r="${R}" fill="none" stroke="var(--line)" stroke-width="16"/>
+    <circle cx="65" cy="65" r="${R}" fill="none" stroke="var(--done)" stroke-width="16"
+      stroke-dasharray="${doneArc} ${C}" stroke-dashoffset="0" transform="rotate(-90 65 65)" stroke-linecap="round"/>
+    <text x="65" y="62" text-anchor="middle" font-size="22" font-weight="700" fill="var(--ink)">${dn}</text>
+    <text x="65" y="80" text-anchor="middle" font-size="11" fill="var(--muted)">/${total} 已掌握</text>
+  </svg>`;
+
+  // 难度饼图
+  const lvColors = ["var(--lv1)","var(--lv2)","var(--lv3)"];
+  const lvNames = ["基础必会","进阶高频","深挖架构"];
+  let pieSVG = `<svg width="130" height="130" viewBox="0 0 130 130">`;
+  let acc = 0;
+  lvStats.forEach((s,i)=>{
+    if(s.total===0) return;
+    const frac = s.total/total;
+    const startAngle = acc*2*Math.PI - Math.PI/2;
+    const endAngle = (acc+frac)*2*Math.PI - Math.PI/2;
+    acc += frac;
+    const x1=65+50*Math.cos(startAngle), y1=65+50*Math.sin(startAngle);
+    const x2=65+50*Math.cos(endAngle), y2=65+50*Math.sin(endAngle);
+    const large = frac>0.5?1:0;
+    if(frac >= 1){
+      pieSVG += `<circle cx="65" cy="65" r="50" fill="${lvColors[i]}"/>`;
+    } else {
+      pieSVG += `<path d="M65,65 L${x1},${y1} A50,50 0 ${large} 1 ${x2},${y2} Z" fill="${lvColors[i]}"/>`;
+    }
+  });
+  pieSVG += `<circle cx="65" cy="65" r="28" fill="var(--panel)"/>
+    <text x="65" y="69" text-anchor="middle" font-size="13" font-weight="600" fill="var(--ink)">${total}</text>
+  </svg>`;
+
+  // 每分类进度
+  const catRows = cats().map(c=>{
+    const d = c.questions.filter(q=>done[q.id]).length;
+    const pct = c.questions.length? Math.round(d/c.questions.length*100):0;
+    const w = c.questions.filter(q=>wrong[q.id]).length;
+    return {id:c.id, name:c.name, icon:c.icon, total:c.questions.length, done:d, pct, wrong:w};
+  });
+
+  document.getElementById("cathead").innerHTML = `<h2>📊 复习统计看板</h2><p>全面掌握你的复习进度、薄弱环节和复习节奏</p>`;
+  document.getElementById("filters").innerHTML = "";
+
+  main.innerHTML = `
+    <div class="stat-grid">
+      <div class="stat-box"><div class="num" style="color:var(--done)">${dn}</div><div class="lbl">已掌握题目</div></div>
+      <div class="stat-box"><div class="num" style="color:var(--lv3)">${wrongN}</div><div class="lbl">错题本</div></div>
+      <div class="stat-box"><div class="num" style="color:var(--lv2)">${dueN}</div><div class="lbl">今日到期复习</div></div>
+      <div class="stat-box"><div class="num" style="color:var(--accent)">${total}</div><div class="lbl">题目总数</div></div>
+    </div>
+    <div class="dashgrid">
+      <div class="dashcard">
+        <h3>🎯 总体掌握率</h3>
+        <div class="donut-wrap">
+          ${donutSVG}
+          <div class="donut-legend">
+            <div><span class="dot" style="background:var(--done)"></span>已掌握 ${dn} 题（${total?Math.round(dn/total*100):0}%）</div>
+            <div><span class="dot" style="background:var(--line)"></span>未掌握 ${notDone} 题（${total?Math.round(notDone/total*100):0}%）</div>
+          </div>
+        </div>
+      </div>
+      <div class="dashcard">
+        <h3>📊 难度分布</h3>
+        <div class="lv-pie">
+          ${pieSVG}
+          <div class="donut-legend">
+            ${lvStats.map((s,i)=>`<div><span class="dot" style="background:${lvColors[i]}"></span>${lvNames[i]}：${s.done}/${s.total}（${s.pct}%）</div>`).join("")}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dashcard" style="margin-bottom:16px">
+      <h3>📚 各分类进度</h3>
+      ${catRows.map(r=>`
+        <div class="dashrow">
+          <span class="lbl" title="${r.name}">${r.icon||"📘"} ${r.name}</span>
+          <span class="track"><i style="width:${r.pct}%;background:var(--done)"></i></span>
+          <span class="val">${r.done}/${r.total}${r.wrong?` ·📕${r.wrong}`:""}</span>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderAll(){ renderSidebar(); renderMain(); }
+renderAll();
+</script>
+<script>
+// PWA Service Worker 注册
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("sw.js").then(reg=>{
+      console.log("SW registered:",reg.scope);
+    }).catch(err=>console.log("SW failed:",err));
+  });
+}
+</script>
+</body>
+</html>
