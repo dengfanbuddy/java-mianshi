@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>契合当前项目的可扩展功能点审计</title>
+<style>
+  :root{
+    --bg:#faf7f2; --card:#ffffff; --ink:#2b2b2b; --sub:#6b6b6b;
+    --line:#e8e2d8; --accent:#b0713c; --accent-soft:#f4e8da;
+    --good:#2e7d32; --good-soft:#e6f2e7; --warn:#b26a00; --warn-soft:#fdf3e0;
+    --bad:#b3392f; --bad-soft:#fbe9e7; --info:#1e5f8a; --info-soft:#e4eff6;
+    --gold:#8a6d1a; --gold-soft:#faf3d8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;line-height:1.7;padding:32px 20px}
+  .wrap{max-width:980px;margin:0 auto}
+  .hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:32px;margin-bottom:24px}
+  .hero h1{font-size:25px;margin-bottom:8px}
+  .hero .meta{color:var(--sub);font-size:14px;margin-bottom:14px}
+  .hero p{font-size:15px}
+  .tag{display:inline-block;background:var(--accent-soft);color:var(--accent);border-radius:6px;padding:2px 10px;font-size:13px;margin-right:6px}
+  .section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px 32px;margin-bottom:24px}
+  .section h2{font-size:20px;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--accent-soft)}
+  .section h3{font-size:16px;margin:20px 0 10px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--accent-soft);color:var(--accent);font-weight:600;white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  .pill{display:inline-block;border-radius:10px;padding:1px 10px;font-size:12px;font-weight:600;white-space:nowrap}
+  .p-high{background:var(--bad-soft);color:var(--bad)}
+  .p-mid{background:var(--warn-soft);color:var(--warn)}
+  .p-low{background:var(--info-soft);color:var(--info)}
+  .s-small{background:var(--good-soft);color:var(--good)}
+  .s-mid{background:var(--warn-soft);color:var(--warn)}
+  .s-large{background:var(--bad-soft);color:var(--bad)}
+  .gold{background:var(--gold-soft);border-left:4px solid var(--gold);border-radius:8px;padding:14px 18px;margin:12px 0}
+  .gold .t{font-weight:700;color:var(--gold);margin-bottom:4px}
+  .gold p{font-size:14px}
+  code{background:var(--accent-soft);color:var(--accent);border-radius:4px;padding:1px 6px;font-size:13px}
+  .num-big{font-size:26px;font-weight:700;color:var(--accent)}
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin:16px 0}
+  .stat{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center}
+  .stat .n{font-size:24px;font-weight:700;color:var(--accent)}
+  .stat .l{font-size:12.5px;color:var(--sub);margin-top:2px}
+  .find{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--line)}
+  .find:last-child{border-bottom:none}
+  .find .icon{font-size:22px;flex-shrink:0;width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--gold-soft)}
+  .find .body{flex:1}
+  .find .bt{font-weight:700;margin-bottom:2px}
+  .find .bd{font-size:13.5px;color:var(--sub)}
+  .find .ev{font-size:13px;margin-top:6px}
+  .roadmap{display:flex;flex-direction:column;gap:14px;margin-top:12px}
+  .phase{display:flex;gap:16px;align-items:flex-start}
+  .phase .num{flex-shrink:0;width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px}
+  .phase .body{flex:1}
+  .phase .body .pt{font-weight:700;margin-bottom:4px}
+  .phase .body p{font-size:14px}
+  .foot{text-align:center;color:var(--sub);font-size:13px;padding:12px 0 40px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hero">
+  <h1>🔬 契合当前项目的可扩展功能点审计</h1>
+  <div class="meta">Java 面试复习库 · 2026-08-08 · 数据层代码级扫描</div>
+  <p>本次用「<b>数据已存在但功能未用</b>」的视角做代码级扫描，只列<b>从当前代码/数据资产里自然长出来</b>的扩展点——不引入新依赖、不改数据格式、不另起炉灶。<br><br>
+  <span class="tag">554 题</span><span class="tag">256 篇教程</span><span class="tag">394 SVG</span><span class="tag">9 个题目字段 100% 覆盖</span></p>
+</div>
+
+<div class="section">
+  <h2>一、核心发现：数据 100% 覆盖 ≠ 功能 100% 利用</h2>
+  <p style="font-size:14.5px">全库 554 道题、9 个字段（id/q/a/point/approach/followups/memory/tags/level）<b>每一个字段都有值</b>，教程 256 篇也全部含 8 段结构。但代码级扫描发现：<b>这些数据大量只做了「展示」，没有做成「可交互功能」</b>。以下是最值得做的 7 个扩展点，全部依托现有数据/状态，零新依赖。</p>
+
+  <div class="stat-grid">
+    <div class="stat"><div class="n">tags</div><div class="l">554/554 题有标签，<b>不可点击、不可筛选</b></div></div>
+    <div class="stat"><div class="n">followups</div><div class="l">554 题有追问链，仅静态展示</div></div>
+    <div class="stat"><div class="n">memory</div><div class="l">554 题有记忆钩子，无速览模式</div></div>
+    <div class="stat"><div class="n">复习记录</div><div class="l">localStorage 有全部时间戳，<b>无任何历史分析</b></div></div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>二、7 个「数据已在、功能未做」的扩展点</h2>
+
+  <div class="find">
+    <div class="icon">🏷️</div>
+    <div class="body">
+      <div class="bt">E1. 标签系统：点击筛选 + 标签聚合视图</div>
+      <div class="bd">全库 554 题都有 <code>tags</code>（如「分布式锁」「GC」「线程池」），但当前只在卡片底部灰色展示，不可点。做成：点标签 → 跨分类筛出所有同标签题；另加「标签云视图」看薄弱面（哪些标签错题多）。</div>
+      <div class="ev"><span class="pill s-small">小</span> <span class="pill p-high">P0</span> · 数据 100% 在，纯 UI 交互 · 依托 <code>matchKw</code>/<code>renderGlobal</code></div>
+    </div>
+  </div>
+
+  <div class="find">
+    <div class="icon">🔥</div>
+    <div class="body">
+      <div class="bt">E2. 追问链练习模式（防「背答案」）</div>
+      <div class="bd">每题的 <code>followups</code>（面试官深挖追问）现只展开显示。做成「追问模式」：题目卡片只显示追问 Q，自答后点开 A —— 专门练「被追问时的临场反应」，比背大段答案高效。</div>
+      <div class="ev"><span class="pill s-small">小</span> <span class="pill p-high">P0</span> · 复用自测模式交互 · 依托 <code>followups</code> 100% 覆盖</div>
+    </div>
+  </div>
+
+  <div class="find">
+    <div class="icon">🧠</div>
+    <div class="body">
+      <div class="bt">E3. 记忆钩子速览模式（考前 15 分钟）</div>
+      <div class="bd">每题的 <code>memory</code>（口诀/类比）是压缩的记忆点。做「钩子速览」：全分类/单分类一屏刷钩子（题干 → 钩子），考前快速过一遍全部记忆锚点，替代翻 print.html 长文档。</div>
+      <div class="ev"><span class="pill s-small">小</span> <span class="pill p-high">P0</span> · 纯展示层新视图 · 依托 <code>memory</code> 100% 覆盖</div>
+    </div>
+  </div>
+
+  <div class="find">
+    <div class="icon">🔀</div>
+    <div class="body">
+      <div class="bt">E4. 跨分类混合自测（当前只能单分类）</div>
+      <div class="bd">自测模式 <code>startQuiz()</code> 只取 <code>window.QB[curCat]</code> 单分类。扩展：全局范围抽题（可勾选「混合分类」）、错题本抽题重测、到期复习抽题——按 <code>scopeAll</code> 逻辑天然支持，改几行。</div>
+      <div class="ev"><span class="pill s-small">小</span> <span class="pill p-mid">P1</span> · 复用 shuffle/grade 逻辑 · 依托 <code>scopeAll</code> 已有开关</div>
+    </div>
+  </div>
+
+  <div class="find">
+    <div class="icon">📅</div>
+    <div class="body">
+      <div class="bt">E5. 复习历史与学习热力图（把时间戳变数据）</div>
+      <div class="bd">localStorage 已存 <code>qb_done_ts</code>（掌握时间）、<code>qb_review</code>（复习轮次）、<code>qb_wrong</code>（错题时间）——但统计看板只用了「当前快照」，没有任何历史曲线。做成：近 30 天学习热力图 + 每日刷题/掌握/复习趋势线 + 复习轮次分布。</div>
+      <div class="ev"><span class="pill s-mid">中</span> <span class="pill p-mid">P1</span> · 纯前端读 localStorage · 依托现有 3 个时间戳存储</div>
+    </div>
+  </div>
+
+  <div class="find">
+    <div class="icon">🔗</div>
+    <div class="body">
+      <div class="bt">E6. 教程「已学完」自动同步题目掌握</div>
+      <div class="bd">教程节点 <code>covers</code> 声明关联题目，但「标记已学完」只记录教程状态。扩展：标记已学完时，其 covers 的题若从未掌握 → 提示「同步标记掌握？」；随堂小测答对 → 该题直接计掌握。把「学完=会做」的隐含关系显式化。</div>
+      <div class="ev"><span class="pill s-small">小</span> <span class="pill p-mid">P1</span> · 依托 <code>covers</code> 100% 覆盖 + <code>setTutDone</code></div>
+    </div>
+  </div>
+
+  <div class="find">
+    <div class="icon">🗂️</div>
+    <div class="body">
+      <div class="bt">E7. 错题本按分类/难度聚合</div>
+      <div class="bd">错题本现在是按时间平铺的列表。扩展：按分类分组展示 + 每分类错题数角标（看哪个分类最薄弱）+ 「全分类错题抽测」。错题数据里有 <code>cat</code>/<code>level</code> 字段，现成可用。</div>
+      <div class="ev"><span class="pill s-small">小</span> <span class="pill p-mid">P1</span> · 依托 <code>qb_wrong</code> 的 cat/level 字段</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>三、补全既有功能的扩展点（README 挂账/自然延伸）</h2>
+  <table>
+    <tr><th>扩展点</th><th>要点</th><th>工作量</th><th>优先级</th></tr>
+    <tr><td><b>E8. 语音朗读</b></td><td>Web Speech API（零依赖）读题干/答案/记忆钩子，通勤听题。README 已挂账</td><td><span class="pill s-small">小</span></td><td><span class="pill p-mid">P1</span></td></tr>
+    <tr><td><b>E9. 每日 5 题自动化</b></td><td>WorkBuddy 定时任务：每天推 5 题到对话（基础2+进阶2+深挖1），晚上验收</td><td><span class="pill s-small">小</span></td><td><span class="pill p-mid">P1</span></td></tr>
+    <tr><td><b>E10. 教程学习计划</b></td><td>按目标日期倒排：输入「还有 N 天面试」→ 按图谱依赖自动生成每日教程+题目清单</td><td><span class="pill s-large">大</span></td><td><span class="pill p-low">P2</span></td></tr>
+    <tr><td><b>E11. 数据导出增强</b></td><td>Markdown 导出、错题本 JSON 导出（现备份是全量 localStorage）</td><td><span class="pill s-small">小</span></td><td><span class="pill p-low">P2</span></td></tr>
+    <tr><td><b>E12. 打印版增强</b></td><td>print.html 加「错题本速览」「记忆钩子单页」（现只有题库完整版）</td><td><span class="pill s-small">小</span></td><td><span class="pill p-low">P2</span></td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <h2>四、建议落地顺序</h2>
+  <div class="roadmap">
+    <div class="phase">
+      <div class="num">1</div>
+      <div class="body">
+        <div class="pt">半天：E1 标签 + E3 钩子速览 + E2 追问模式</div>
+        <p>三个都是「数据 100% 在、加个视图」的改动，立即把静态数据变交互功能，体感提升最大。</p>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="num">2</div>
+      <div class="body">
+        <div class="pt">一天：E4 跨分类自测 + E7 错题聚合 + E6 教程同步</div>
+        <p>把现有流程打通：自测范围扩大、错题可归纳、学完即掌握。</p>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="num">3</div>
+      <div class="body">
+        <div class="pt">可选：E5 学习热力图 + E8 语音 + E9 每日推送</div>
+        <p>各自独立、可挑选。E5 数据已攒了很久，越早做历史曲线越有价值。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="foot">审计方法：数据字段覆盖率扫描（vm 沙箱加载全部 data）· 功能点逐代码行验证 · 全部扩展点零新依赖、零数据格式变更</div>
+
+</div>
+</body>
+</html>

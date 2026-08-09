@@ -1,9 +1,9 @@
 window.QB = window.QB || {};
 window.QB["mq"] = {
   "id": "mq",
-  "name": "消息队列 Kafka/RabbitMQ",
+  "name": "消息队列 Kafka",
   "icon": "📨",
-  "desc": "Kafka 架构与语义、可靠性三板斧、选型对比；结合日志服消费 Kafka、支付服解耦、活动奖励异步发放等游戏服实战场景复习。",
+  "desc": "Kafka 架构与语义、可靠性三板斧、高吞吐原理；结合日志服消费 Kafka、支付服解耦、活动奖励异步发放等游戏服实战场景复习。",
   "questions": [
     {
       "id": "mq-01",
@@ -175,30 +175,6 @@ window.QB["mq"] = {
       ]
     },
     {
-      "id": "mq-08",
-      "level": 1,
-      "q": "RocketMQ / RabbitMQ / Kafka 三者的定位和差异是什么？你们选型时怎么考虑的？",
-      "a": "核心结论：吞吐选 Kafka，业务功能选 RocketMQ，简单灵活选 RabbitMQ。\n1. Kafka：\n   - 定位：高吞吐日志流/大数据管道，单机十万~百万级 TPS；\n   - 劣势：功能简单，原生不支持延迟消息、死信队列，消息体大时吞吐下降明显；\n   - 适用：行为日志、BI 数据管道、埋点上报。\n2. RocketMQ（阿里系）：\n   - 定位：业务消息，功能全——延迟消息（18 个固定级别）、事务消息、消息轨迹、定时重投；\n   - 吞吐万级~十万级，Java 生态友好；\n   - 适用：订单、支付、交易类业务。\n3. RabbitMQ：\n   - 定位：企业级灵活路由，Exchange（direct/topic/fanout/headers）路由能力最强；\n   - Erlang 实现，吞吐万级，延迟低（微秒级），但堆积能力弱（堆积后性能骤降）；\n   - 适用：中小规模、路由复杂、延迟敏感的业务。\n游戏项目选型思路：日志/BI 数据管道用 Kafka（吞吐优先）；支付回调、活动奖励发放这类要求功能与可靠性的业务事件，RocketMQ 更合适（延迟消息、事务消息开箱即用）；GM 后台内部小流量通知用 RabbitMQ 也合理。",
-      "point": "考察对三大 MQ 定位差异的结构化认知与按业务场景选型的判断力。",
-      "approach": "先一句话给选型结论「吞吐 Kafka、业务 RocketMQ、灵活 RabbitMQ」，再用统一维度（定位/吞吐/功能特长/短板/适用场景）逐个对比，避免东拉西扯。最后落到游戏项目：日志 Kafka、支付 RocketMQ、GM 小流量 RabbitMQ。坑：别只说「Kafka 快」；要点出 RabbitMQ 堆积弱、Kafka 无延迟消息等短板。",
-      "followups": [
-        {
-          "q": "如果让你们把支付服的 Kafka 换成 RocketMQ，最大的收益是什么？",
-          "a": "开箱即用的延迟消息（订单超时关闭）、事务消息（本地事务与发消息一致）、消息轨迹与定时重投——业务可靠性功能不用自己在应用层攒。"
-        },
-        {
-          "q": "RabbitMQ 消息堆积后为什么会性能骤降？",
-          "a": "消息优先驻内存，堆积后被换出磁盘，队列索引与分页 IO 开销陡增；单队列顺序处理，堆积下消费延迟恶性循环。"
-        }
-      ],
-      "memory": "口诀：「Kafka 拉货火车，RocketMQ 业务快递，RabbitMQ 灵活分拣」——按货选车。",
-      "tags": [
-        "选型",
-        "对比",
-        "基础"
-      ]
-    },
-    {
       "id": "mq-09",
       "level": 2,
       "q": "Kafka 如何保证消息不丢？请从生产者、Broker、消费者三个环节分别说明。",
@@ -347,9 +323,9 @@ window.QB["mq"] = {
       "id": "mq-15",
       "level": 2,
       "q": "死信队列（DLQ）是什么？Kafka 没有内置死信队列，你们会怎么实现？什么样的消息该进死信？",
-      "a": "核心结论：死信队列是「多次重试仍失败的毒药消息（poison message）的隔离区」，防止一条坏消息卡死整个分区。\n1. 概念：RabbitMQ 原生支持（消息被拒绝/过期/队列满时路由到 DLX 交换机）；RocketMQ 重试 16 次后自动进 %DLQ% 队列；Kafka 无原生 DLQ，需应用层实现。\n2. Kafka 实现方式：\n   - 消费失败按策略重试（可在消费端内存重试，或投递到 retry topic 延迟重试）；\n   - 超过最大重试次数后，消费者把消息原样（附带上原 Topic、分区、offset、异常堆栈）produce 到 dlq-topic，然后提交原 offset 继续消费；\n   - DLQ 配独立消费者做告警 + 人工/自动补偿（修复数据后重投）。\n3. 什么消息该进死信：数据格式错误、业务状态非法（如订单已关闭还收到支付通知）、依赖数据缺失等「重试一万次也不会成功」的确定性失败。\n4. 不该进死信的：临时性失败（DB 连接抖动、下游超时），这类该重试而不是死信。\n游戏项目关联：日志服消费时遇到脏数据（导表配置变更导致老格式日志解析失败），进死信 Topic 并告警，不阻塞正常的日志写库。",
+      "a": "核心结论：死信队列是「多次重试仍失败的毒药消息（poison message）的隔离区」，防止一条坏消息卡死整个分区。\n1. 概念：Kafka 无原生 DLQ，需应用层实现。\n2. Kafka 实现方式：\n   - 消费失败按策略重试（可在消费端内存重试，或投递到 retry topic 延迟重试）；\n   - 超过最大重试次数后，消费者把消息原样（附带上原 Topic、分区、offset、异常堆栈）produce 到 dlq-topic，然后提交原 offset 继续消费；\n   - DLQ 配独立消费者做告警 + 人工/自动补偿（修复数据后重投）。\n3. 什么消息该进死信：数据格式错误、业务状态非法（如订单已关闭还收到支付通知）、依赖数据缺失等「重试一万次也不会成功」的确定性失败。\n4. 不该进死信的：临时性失败（DB 连接抖动、下游超时），这类该重试而不是死信。\n游戏项目关联：日志服消费时遇到脏数据（导表配置变更导致老格式日志解析失败），进死信 Topic 并告警，不阻塞正常的日志写库。",
       "point": "考察对毒药消息隔离思想的理解及在 Kafka 上用应用层实现 DLQ 的能力。",
-      "approach": "先给定义「防一条坏消息卡死分区」，对比 RabbitMQ/RocketMQ 原生支持，再讲 Kafka 应用层实现链路：重试策略→超限投 dlq-topic（带原坐标与堆栈）→提交原 offset→独立消费告警补偿。强调「确定性失败才进死信、临时失败该重试」的判别标准。坑：别让消费线程 sleep 硬等；别什么失败都进死信。",
+      "approach": "先给定义「防一条坏消息卡死分区」，再讲 Kafka 应用层实现链路：重试策略→超限投 dlq-topic（带原坐标与堆栈）→提交原 offset→独立消费告警补偿。强调「确定性失败才进死信、临时失败该重试」的判别标准。坑：别让消费线程 sleep 硬等；别什么失败都进死信。",
       "followups": [
         {
           "q": "重试 topic 怎么做延迟重试？直接用 Thread.sleep 卡住消费者行不行？",
@@ -365,30 +341,6 @@ window.QB["mq"] = {
         "死信队列",
         "重试",
         "毒药消息"
-      ]
-    },
-    {
-      "id": "mq-16",
-      "level": 2,
-      "q": "延迟消息有哪些实现方案？结合「活动奖励 24 小时后补发」「未支付订单 15 分钟关闭」场景说明。",
-      "a": "核心结论：延迟消息没有银弹，按延迟精度、量级、已有组件选型：RocketMQ 固定级别最省事，时间轮精度最高，Redis ZSet 中小量级最灵活。\n1. RocketMQ 延迟消息：原生支持 18 个固定延迟级别（1s 5s 30s 1m ... 2h），发消息时指定 delayLevel 即可，原理是 Broker 先把消息写入 SCHEDULE_TOPIC，定时扫描到期后转投真实 Topic。优点：开箱即用、可靠；缺点：级别固定不能任意时长。\n2. Kafka 无原生延迟消息，方案：\n   - 多级延迟 Topic + 定时转发（自己实现 RocketMQ 那套）；\n   - 消费端先写 DB/Redis，定时任务扫描投递（延迟要求不高时最简单）。\n3. Redis ZSet：score 存到期时间戳，定时线程 zrangebyscore 捞到期任务再投递。中小量级、精度秒级够用，但要自己处理可靠性与重试。\n4. 时间轮（HashedWheelTimer，Netty 自带）：进程内高精度定时，适合服内延迟（如技能 CD、掉落回收），宕机即丢，不能跨服。\n游戏项目关联：\n- 「订单 15 分钟未支付关闭」：RocketMQ 延迟消息或 Redis ZSet 二选一；\n- 「活动奖励分批/补发」「限时礼包到期下架」：量级不大，DB 扫描 + MQ 投递即可；\n- 服内逻辑延迟（如 3 秒后结算战斗奖励）走 Netty 时间轮/Disruptor 自带的调度，不必过 MQ。",
-      "point": "考察对多种延迟消息方案的原理、精度与适用边界的横向掌握。",
-      "approach": "先给选型矩阵结论，再按 RocketMQ 固定级别（讲清 SCHEDULE_TOPIC 原理）、Redis ZSet、时间轮、Kafka 自研四种方案逐个讲原理与短板，最后把「订单 15 分钟关闭」「奖励补发」「服内 3 秒结算」三个场景对号入座。坑：别说 Kafka 有延迟消息；别把时间轮用于跨服场景。",
-      "followups": [
-        {
-          "q": "Redis ZSet 延迟队列在实例宕机、重复投递上有什么坑？怎么兜底？",
-          "a": "单实例宕机丢任务（要主从+持久化），多实例抢任务重复投递（要 SETNX 认领或分布式锁）；兜底靠任务状态落库+消费端幂等。"
-        },
-        {
-          "q": "为什么 Kafka 社区一直不做原生任意延迟消息？实现难点在哪？",
-          "a": "分区日志是顺序追加模型，任意延迟需要海量定时器与随机转投，破坏顺序写与段式存储设计；社区倾向交给流处理/应用层解决。"
-        }
-      ],
-      "memory": "口诀：「固定档 RocketMQ，灵活 Redis ZSet，服内时间轮，Kafka 自己攒」。",
-      "tags": [
-        "延迟消息",
-        "时间轮",
-        "场景"
       ]
     },
     {
@@ -639,83 +591,6 @@ window.QB["mq"] = {
       ]
     },
     {
-      "id": "mq-27",
-      "level": 2,
-      "q": "RabbitMQ 的四种交换机类型（direct/topic/fanout/headers）有什么区别？结合 GM 后台与多渠道游戏服场景各选哪种？",
-      "a": "核心结论：交换机负责路由、队列负责存储；fanout 广播、direct 精确匹配、topic 模式匹配、headers 按消息头匹配。\n1. direct：routing key 完全相等才投递。场景：点对点精确路由，如 GM 后台给指定服务器发指令（key=serverId）。\n2. fanout：不看 key，广播到所有绑定队列。场景：全服公告、配置热更新通知——每个游戏服实例绑一个队列到 fanout 交换机，GM 发一次全服收到。\n3. topic：key 按「.」分词，支持 *（匹配一个词）和 #（匹配零或多个词）通配。场景：多渠道多维路由，如 key=channel.huawei.activity，渠道服订阅 channel.huawei.#，运营后台订阅 channel.*.activity。\n4. headers：按消息头键值对匹配（x-match=all/any），不看 routing key，性能较差，生产用得少。\n5. 配套概念：binding 是交换机与队列之间的路由规则；消息路由不到任何队列时默认丢弃，配 mandatory + ReturnListener 可拿回未路由消息。\n游戏项目关联：候选人做过 GM 后台重构与渠道接入——「GM 全服通知用 fanout、定向指令用 direct、渠道差异化活动用 topic」三段式讲出来，直接覆盖 RabbitMQ 路由全部考点。",
-      "point": "考察对四种交换机路由规则的掌握及按 GM/渠道业务场景选型的能力。",
-      "approach": "先给「交换机管路由、队列管存储」的总纲，再按 direct/fanout/topic/headers 逐个讲匹配规则，每个立刻配一个 GM 后台/渠道服场景（direct 点名、fanout 广播、topic 通配多维路由），补 binding 与 mandatory 未路由处理。坑：headers 知道即可不必展开；别忘队列才是存储载体。",
-      "followups": [
-        {
-          "q": "fanout 场景下某个游戏服实例宕机，它的队列消息会堆积吗？怎么设计让它重启后不漏指令？",
-          "a": "会堆积在该实例独占队列；关键指令用 durable 队列+持久化消息，重启重连后继续消费不漏；非关键广播可用排他/auto-delete 队列容忍丢失。"
-        },
-        {
-          "q": "topic 交换机的 key 设计有什么规范？为什么不建议层级过深？",
-          "a": "层级 2~4 层为宜、语义化（域.对象.动作）、全小写；层级过深导致绑定匹配复杂难维护，通配订阅容易误匹配。"
-        }
-      ],
-      "memory": "口诀：「fanout 大喇叭，direct 点名，topic 通配符，headers 看脸色（消息头）」。",
-      "tags": [
-        "RabbitMQ",
-        "交换机",
-        "路由",
-        "场景"
-      ]
-    },
-    {
-      "id": "mq-28",
-      "level": 2,
-      "q": "RabbitMQ 怎么保证消息可靠？publisher confirm、持久化、消费者 ack 三板斧分别怎么配？镜像队列和 quorum 队列又是什么？",
-      "a": "核心结论：RabbitMQ 可靠性 = 发送确认 + 三处持久化 + 手动 ack；高可用 = quorum 队列（Raft 多数派），镜像队列已是过时方案。\n1. 生产者侧——publisher confirm：Broker 收到并落盘后回 ack，异步回调里处理 nack 重发；比 AMQP 事务（tx）性能好一个量级，生产必用。配套 ReturnListener 处理路由不到队列的消息。\n2. Broker 侧——三处持久化缺一不可：exchange 声明 durable、queue 声明 durable、消息 deliveryMode=2（persistent）。注意：持久化只保证「重启后还在」，写页缓存未落盘时宕机仍可能丢。\n3. 消费者侧——手动 ack：关闭 autoAck，业务处理成功后 basicAck；失败 basicNack(requeue=true) 重回队列（有死循环风险，要配重试计数进 DLX），或 basicReject(requeue=false) 直接进死信。\n4. 高可用演进：\n   - 镜像队列（mirrored queue，已废弃）：主从全量同步复制，吞吐差、网络分区下有脑裂风险；\n   - quorum 队列（3.8+ 推荐）：基于 Raft，半数以上节点确认即写入成功，天然抗脑裂，故障自动选主。\n游戏项目关联：GM 后台（RuoYi 重构）内部通知、购买服与渠道对账的小流量事件用 RabbitMQ 时，「confirm + durable + 手动 ack + quorum 队列」是标准答案；指令类消息消费失败 requeue 重投要防「坏消息反复重投打满队列」。",
-      "point": "考察 confirm/持久化/手动 ack 三板斧及 quorum 队列高可用方案的系统掌握。",
-      "approach": "按「发、存、收、活」四段讲：confirm 异步回调、三处 durable 缺一不可、手动 ack 与 nack 策略、quorum 队列 Raft 原理，明确镜像队列已过时。用 GM 后台小流量场景收尾。坑：别把 confirm 的 ack 理解成消费者已处理；别忘 requeue 死循环要配 DLX。",
-      "followups": [
-        {
-          "q": "publisher confirm 的 ack 是代表「消息已被消费者处理」吗？不是的话代表什么？",
-          "a": "不是。confirm 的 ack 只代表「Broker 收到并（持久化后）接受」；消费端处理成功与否靠手动 ack 机制，两端确认是独立的两段。"
-        },
-        {
-          "q": "basicNack(requeue=true) 造成消息无限重投怎么办？",
-          "a": "消费端在消息头维护重试计数，超限 basicReject 进 DLX；quorum 队列可配 delivery-limit 原生超限入死信。"
-        }
-      ],
-      "memory": "口诀：「confirm 管发，durable 管存，手动 ack 管收，quorum 管活着」。",
-      "tags": [
-        "RabbitMQ",
-        "可靠性",
-        "confirm",
-        "quorum",
-        "场景"
-      ]
-    },
-    {
-      "id": "mq-29",
-      "level": 2,
-      "q": "消息 TTL 在 RabbitMQ 和 Kafka 里分别是什么机制？RabbitMQ 的 per-message TTL 有什么经典坑？怎么用 TTL + DLX 实现延迟消息？",
-      "a": "核心结论：RabbitMQ TTL 是「消息存活时间，到期进死信」，Kafka 只有「日志保留时间，到期删除」——语义完全不同，概念不能混用。\n1. RabbitMQ TTL 两种设置：\n   - per-queue TTL（x-message-ttl）：队列级统一过期时间，消息入队即倒计时；\n   - per-message TTL（消息属性 expiration）：单条消息独立过期时间。\n2. 经典坑：per-message TTL 存在队头阻塞——RabbitMQ 只在消息到达队头时才惰性检查过期，队头一条 TTL 很长的消息会「护住」后面 TTL 短的消息不被及时剔除。所以延迟消息必须用 per-queue TTL，一个延迟档位一条队列。\n3. TTL + DLX 延迟消息：业务队列 A 不配消费者、设 x-message-ttl=15min + x-dead-letter-exchange 指向真实交换机，消息在 A 里「躺尸」15 分钟后变成死信路由到真实队列 B 被消费——这就是 RabbitMQ 版延迟消息（也可用 rabbitmq_delayed_message_exchange 插件）。\n4. Kafka 对照：retention.ms 是日志保留策略（到期段级删除、回收磁盘），不是「消息过期投递」；Kafka 没有消息级 TTL 概念，延迟消息只能应用层实现。\n游戏项目关联：「未支付订单 15 分钟关闭」用 RabbitMQ 就是 per-queue TTL + DLX；「限时礼包到期下架」同理。千万别在同一队列里混不同 TTL 的消息。",
-      "point": "考察对 RabbitMQ 与 Kafka TTL 语义差异及 per-message TTL 队头阻塞坑的理解。",
-      "approach": "先划清语义：RabbitMQ TTL=到期进死信，Kafka retention=到期删除回收磁盘。再讲两种 TTL 设置与 per-message 队头阻塞的经典坑（惰性检查），然后给 TTL+DLX 延迟消息标准搭法，强调「一个延迟档位一条队列」。坑：别把 Kafka retention 当消息级 TTL；别在同一队列混不同 TTL。",
-      "followups": [
-        {
-          "q": "per-message TTL 的队头阻塞问题，官方延迟插件（delayed message exchange）是怎么绕开的？",
-          "a": "插件在交换机层用内部 Mnesia 表按到期时间排序暂存消息，到期才路由进队列——消息不进队列排队，天然没有队头阻塞。"
-        },
-        {
-          "q": "队列同时设了 TTL 和 max-length（长度上限），消息先被哪个规则剔除？",
-          "a": "两条规则同时生效，哪个先触发按哪个剔除：到 TTL 进死信；超 max-length 时队头消息被挤出，配了 DLX 同样进死信。"
-        }
-      ],
-      "memory": "口诀：「RabbitMQ TTL 是定时炸弹（到期炸去死信），Kafka retention 是垃圾清运（到期扔垃圾桶）」；延迟队列一个档位一条队。",
-      "tags": [
-        "TTL",
-        "RabbitMQ",
-        "延迟消息",
-        "DLX",
-        "场景"
-      ]
-    },
-    {
       "id": "mq-30",
       "level": 2,
       "q": "线上 Kafka 集群必须监控哪些核心指标？各自反映什么问题？你们的告警阈值怎么设？",
@@ -738,31 +613,6 @@ window.QB["mq"] = {
         "运维",
         "告警",
         "场景"
-      ]
-    },
-    {
-      "id": "mq-31",
-      "level": 3,
-      "q": "Kafka 和 Pulsar 在架构上的本质区别是什么？存算分离带来什么优势和代价？为什么游戏日志场景 Kafka 仍是主流？",
-      "a": "核心结论：Pulsar = 存算分离（无状态 Broker + BookKeeper 存储层），Kafka = 存算一体（Broker 持有数据）；前者弹性强，后者生态与成熟度碾压。\n1. Pulsar 架构：\n   - Broker 无状态，只管接收/分发；数据存 BookKeeper（Bookie 节点），以 ledger 为单位分布式写多副本；\n   - 优势：扩 Broker 秒级（不搬数据）、扩存储不影响服务、天然分层存储（冷数据卸载 S3/HDFS）、单集群百万级 Topic、原生多租户隔离；\n   - 代价：多一跳网络（Broker→Bookie）延迟略增，组件多（ZK/etcd + Bookie + Broker）运维重，社区与排坑案例少于 Kafka。\n2. Kafka 架构：Broker 持有分区数据，扩缩容/换机要搬数据（分区重分配，吃带宽、慢）；但架构简单、延迟更低，客户端与生态（Connect/Streams/Flink 集成、监控方案）最成熟。\n3. 关键差异：副本协议（Kafka 主从 ISR vs BookKeeper 多副本并行写 quorum）、消费模型（Pulsar 原生 Shared 订阅即队列语义，一条消息只被组内一人处理且不受分区数限制；Kafka 组内互斥、并行度 = 分区数）。\n4. 游戏日志场景判断：日志管道看重「生态成熟 + 团队维护能力 + 峰值吞吐确定性」，Kafka 运维人才好找、告警方案现成、与 Flink/ClickHouse 对接最顺；Pulsar 的存算分离弹性对「分区长期不动、洪峰短时」的游戏日志收益有限。除非集团中台统一 Pulsar，自建日志管道选 Kafka。",
-      "point": "考察对存算分离架构本质、优劣权衡及结合团队生态做选型的判断力。",
-      "approach": "先一句话点破架构差异（存算一体 vs Broker+Bookie 存算分离），再从弹性、延迟、运维复杂度、生态四维度对比，补 Shared 订阅这个消费模型差异。最后给游戏日志场景的选型结论与理由。坑：别只吹 Pulsar 先进；要承认 Kafka 生态与人才成熟度优势。",
-      "followups": [
-        {
-          "q": "Pulsar 的 Shared 订阅与 Kafka 消费者组语义差异，对你们日志服消费并行度设计有什么影响？",
-          "a": "Pulsar Shared 订阅组内多人可同读一个订阅（队列语义），并行度不受分区数限制；Kafka 必须先扩分区才能加消费者，容量规划上 Pulsar 更灵活。"
-        },
-        {
-          "q": "Kafka 也在做分层存储（KIP-405）和去 ZK，会不会抹平 Pulsar 的优势？",
-          "a": "KIP-405 分层存储与 KRaft 补齐了弹性与运维短板，差距在缩小；但 Shared 订阅、多租户、原生跨地域复制仍是 Pulsar 差异点，选型更多看团队生态。"
-        }
-      ],
-      "memory": "类比：Kafka 是「前店后仓一体铺」，Pulsar 是「门店（Broker）+ 中央仓（Bookie）」——分店开得飞快，但多一趟物流。",
-      "tags": [
-        "Pulsar",
-        "存算分离",
-        "对比",
-        "深挖"
       ]
     },
     {
@@ -819,13 +669,13 @@ window.QB["mq"] = {
       "id": "mq-34",
       "level": 2,
       "q": "Kafka 消费者为什么是拉（pull）模式而不是推（push）模式？消费位点存在哪里，__consumer_offsets 是什么机制？",
-      "a": "核心结论：pull 让消费速率由消费者自己掌控（天然背压），Broker 无需跟踪每条消息的投递状态；offset 存在内部 Topic __consumer_offsets，本质是把「消费进度」也做成 Kafka 日志。\n1. pull 的优势：\n   - 背压自控：消费者按自己的能力批量拉取，下游 MySQL 慢就少拉——Broker 不会被「推给慢消费者」拖垮；\n   - 批量友好：poll 一次拉一批，摊薄 RPC；\n   - Broker 简单：不用维护「每条消息已推给谁、确认没有」的状态机，按 offset 读日志即可。\n2. push 模式对照：RabbitMQ 偏 push（实际是带 prefetch 的推拉混合），低延迟、路由复杂场景好，但消费端必须靠 prefetch count 做流控。\n3. __consumer_offsets：Kafka 2.x 起 offset 不再存 ZK，而是提交到内部 Topic（默认 50 分区，key = group + topic + partition，value = offset + 元数据）：\n   - 好处：天然多副本高可用，写入就是追加日志，Log Compaction 压缩只保留每组最新位点；\n   - Group Coordinator（某台 Broker 兼任，按 group.id 哈希定位到对应分区）负责该组的 offset 提交与重平衡协调。\n4. 为什么放弃 ZK 存 offset：高频提交打爆 ZK 写性能，ZK 不适合高频小写场景——和 KRaft 去 ZK 是同一思路：「元数据/状态都收编为内部日志」。\n游戏项目关联：日志服消费端「poll 批量 + 自己控速」正好匹配「游戏服生产洪峰、日志服匀速消费」的削峰模型；理解 Group Coordinator 有助于排查「COORDINATOR_NOT_AVAILABLE / COORDINATOR_LOAD_IN_PROGRESS」这类线上故障。",
+      "a": "核心结论：pull 让消费速率由消费者自己掌控（天然背压），Broker 无需跟踪每条消息的投递状态；offset 存在内部 Topic __consumer_offsets，本质是把「消费进度」也做成 Kafka 日志。\n1. pull 的优势：\n   - 背压自控：消费者按自己的能力批量拉取，下游 MySQL 慢就少拉——Broker 不会被「推给慢消费者」拖垮；\n   - 批量友好：poll 一次拉一批，摊薄 RPC；\n   - Broker 简单：不用维护「每条消息已推给谁、确认没有」的状态机，按 offset 读日志即可。\n2. push 模式对照：偏 push 的模型低延迟、路由复杂场景有优势，但消费端必须靠 prefetch 类流控机制做背压，Broker 要为每条消息维护投递与确认状态，实现与排障更复杂。\n3. __consumer_offsets：Kafka 2.x 起 offset 不再存 ZK，而是提交到内部 Topic（默认 50 分区，key = group + topic + partition，value = offset + 元数据）：\n   - 好处：天然多副本高可用，写入就是追加日志，Log Compaction 压缩只保留每组最新位点；\n   - Group Coordinator（某台 Broker 兼任，按 group.id 哈希定位到对应分区）负责该组的 offset 提交与重平衡协调。\n4. 为什么放弃 ZK 存 offset：高频提交打爆 ZK 写性能，ZK 不适合高频小写场景——和 KRaft 去 ZK 是同一思路：「元数据/状态都收编为内部日志」。\n游戏项目关联：日志服消费端「poll 批量 + 自己控速」正好匹配「游戏服生产洪峰、日志服匀速消费」的削峰模型；理解 Group Coordinator 有助于排查「COORDINATOR_NOT_AVAILABLE / COORDINATOR_LOAD_IN_PROGRESS」这类线上故障。",
       "point": "考察对 pull 模式背压优势及 __consumer_offsets 内部机制的理解。",
-      "approach": "先从「消费速率谁掌控」讲 pull 三大优势（背压自控、批量摊薄 RPC、Broker 无状态化），对照 RabbitMQ 的 push+prefetch 混合模式，再讲 __consumer_offsets 把消费进度做成内部日志的机制与 Group Coordinator 角色，补「状态收编为内部日志」的去 ZK 统一思路。坑：别说 RabbitMQ 是纯 push；别漏 compaction 只留最新位点。",
+      "approach": "先从「消费速率谁掌控」讲 pull 三大优势（背压自控、批量摊薄 RPC、Broker 无状态化），对照 push 模式需要流控的短板，再讲 __consumer_offsets 把消费进度做成内部日志的机制与 Group Coordinator 角色，补「状态收编为内部日志」的去 ZK 统一思路。坑：别漏 compaction 只留最新位点。",
       "followups": [
         {
-          "q": "RabbitMQ 的 prefetch count 是什么？没有它 push 模式会出什么问题？",
-          "a": "消费者未确认消息数上限，Broker 按此限速推送；没有它 Broker 会把慢消费者内存灌爆，快消费者也抢不到消息，负载严重不均。"
+          "q": "pull 模式下消费速率怎么控制？会不会一直空轮询浪费资源？",
+          "a": "poll 带超时参数：有消息立即返回、无消息阻塞到超时再返回，配合 max.poll.records 限制单批条数；消费速率由处理耗时 + poll 超时共同决定，天然适应下游吞吐。"
         },
         {
           "q": "新消费者组启动时报 COORDINATOR_LOAD_IN_PROGRESS 是什么含义？",

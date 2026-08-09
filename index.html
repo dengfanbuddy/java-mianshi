@@ -130,6 +130,11 @@
   .wrbtn,.rvbtn{font-size:12px;padding:4px 12px;border-radius:14px;border:1px solid var(--line);background:var(--panel);cursor:pointer;color:var(--muted)}
   .wrbtn:hover{border-color:var(--lv3);color:var(--lv3)}
   .rvbtn:hover{border-color:var(--done);color:var(--done)}
+  .tutlink{font-size:12px;padding:4px 12px;border-radius:14px;border:1px solid var(--line);background:var(--panel);cursor:pointer;color:var(--accent)}
+  .tutlink:hover{background:var(--accent-soft);border-color:var(--accent)}
+  .tutbtn{font-size:14px;cursor:pointer;padding:3px 6px;border-radius:8px;flex-shrink:0;opacity:.85;transition:background .15s,opacity .15s}
+  .tutbtn:hover{background:var(--accent-soft);opacity:1}
+  .tutline{font-size:11px;color:var(--muted);margin-top:3px}
   #empty{color:var(--muted);text-align:center;padding:60px 0;font-size:14px}
 
   /* 自测模式 */
@@ -181,6 +186,109 @@
   .lv-pie{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
   .lv-pie svg{flex-shrink:0}
 
+  /* ===== 教程知识库 ===== */
+  .tutbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+  .tutbar h2{font-size:19px;display:flex;align-items:center;gap:8px}
+  .tutbar .tb-prog{margin-left:auto;font-size:12px;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:4px 12px}
+  .tutbar .tb-prog b{color:var(--accent)}
+  .tutbar .btn{font-size:12.5px;padding:6px 14px;border-radius:14px;border:1px solid var(--line);background:var(--panel);cursor:pointer;color:var(--ink)}
+  .tutbar .btn:hover{background:var(--accent-soft);border-color:var(--accent)}
+  .tutbar .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  #tutGraphWrap{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;overflow-x:auto}
+  #tutGraphWrap svg{display:block;min-width:620px;width:100%;height:auto}
+  .g-node{cursor:pointer}
+  .g-node rect{fill:var(--panel);stroke:var(--line);stroke-width:1.5;rx:10}
+  .g-node:hover rect{stroke:var(--accent)}
+  .g-node.done rect{stroke:var(--done);fill:var(--card-done-bg)}
+  .g-node.locked{opacity:.42}
+  .g-node .t1{fill:var(--ink);font-size:12.5px;font-weight:600}
+  .g-node .t2{fill:var(--muted);font-size:11px}
+  .g-edge{fill:none;stroke:var(--muted);stroke-width:1.5;opacity:.75}
+  .g-layer{fill:var(--accent);font-size:12px;font-weight:700;letter-spacing:2px}
+  .g-hint{font-size:12px;color:var(--muted);line-height:1.7;margin:10px 2px 0}
+  .g-hint b{color:var(--accent)}
+  .tutwrap{display:flex;gap:16px;align-items:flex-start}
+  .tutnav{width:228px;min-width:228px;position:sticky;top:6px;max-height:calc(100vh - 130px);overflow-y:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 8px;flex-shrink:0}
+  .tutnav .tn-l{font-size:11px;color:var(--muted);margin:10px 6px 5px;letter-spacing:2px;font-weight:700}
+  .tutnav .tn-item{display:flex;align-items:center;gap:6px;padding:7px 8px;border-radius:8px;cursor:pointer;font-size:12.5px;color:var(--ink);line-height:1.45}
+  .tutnav .tn-item:hover{background:var(--accent-soft)}
+  .tutnav .tn-item.cur{background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+  .tutnav .tn-item.locked{opacity:.45;cursor:not-allowed}
+  .tutnav .tn-item .st{margin-left:auto;font-size:11px;color:var(--muted)}
+  .tutnav .tn-item.done .st{color:var(--done)}
+  .tutmain{flex:1;min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:24px 28px 34px}
+  .tutmain .tm-head{margin-bottom:6px}
+  .tutmain .tm-title{font-size:21px;font-weight:700;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .tutmain .tm-meta{font-size:12px;color:var(--muted);margin:8px 0 14px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .tutmain .tm-meta .chip-lv{font-size:11px;padding:2px 10px;border-radius:10px;background:var(--accent-soft);color:var(--accent)}
+  .tb-block{margin:14px 0}
+  .tb-lead{background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:12px 16px;font-size:14px;line-height:1.8;color:var(--body-ink);font-weight:600}
+  .tb-pre{background:var(--point-bg);border-radius:10px;padding:10px 16px;font-size:13px;line-height:1.9;color:var(--point-ink)}
+  .tb-pre b{color:var(--accent)}
+  .tb-h{font-size:16px;font-weight:700;color:var(--accent);margin:24px 0 8px;padding-left:10px;border-left:4px solid var(--accent)}
+  .tb-p{font-size:14px;line-height:1.95;color:var(--body-ink);margin:10px 0}
+  .tb-list{margin:10px 0 10px 6px;list-style:none}
+  .tb-list li{font-size:13.5px;line-height:1.9;color:var(--body-ink);padding-left:20px;position:relative;margin-bottom:4px}
+  .tb-list li::before{content:"▸";position:absolute;left:2px;color:var(--accent)}
+  .tb-code{background:var(--bg);border:1px solid var(--line);border-radius:10px;margin:12px 0;overflow-x:auto}
+  .tb-code .cd-lang{font-size:10.5px;color:var(--muted);padding:5px 12px;border-bottom:1px solid var(--line);letter-spacing:1px;display:flex;justify-content:space-between}
+  .tb-code pre{margin:0;padding:12px 14px;font-family:Consolas,"Courier New",monospace;font-size:12.5px;line-height:1.7;color:var(--body-ink);white-space:pre;overflow-x:auto}
+  .tb-svg{margin:14px 0;text-align:center}
+  .tb-svg svg{max-width:100%;height:auto;display:inline-block}
+  .tb-svg .cap{font-size:12px;color:var(--muted);margin-top:6px;text-align:center}
+  .tb-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+  .tb-table th{background:var(--accent-soft);color:var(--accent);padding:8px 12px;text-align:left;border:1px solid var(--line);font-weight:700}
+  .tb-table td{padding:8px 12px;border:1px solid var(--line);color:var(--body-ink);line-height:1.7}
+  .tb-table tr:nth-child(even) td{background:var(--bg)}
+  .tb-pits{background:var(--lv3-bg);border-left:4px solid var(--lv3);border-radius:0 10px 10px 0;padding:12px 16px;margin:14px 0}
+  .tb-pits .pt{font-weight:700;color:var(--lv3);font-size:13px;margin-bottom:8px}
+  .tb-pits li{font-size:13px;line-height:1.85;color:var(--body-ink);margin-left:18px;margin-bottom:6px}
+  .tb-pits li b{color:var(--lv3)}
+  .tb-callout{border-radius:10px;padding:11px 15px;font-size:13px;line-height:1.8;margin:12px 0}
+  .tb-callout.tip{background:var(--lv1-bg);color:var(--point-ink);border:1px solid var(--card-done-border)}
+  .tb-callout.warn{background:var(--accent-soft);border:1px dashed var(--approach-border);color:var(--memo-ink)}
+  .tb-callout.unverified{background:var(--lv3-bg);border:1px dashed var(--lv3);color:var(--lv3)}
+  .tb-related{margin-top:26px;border-top:1px dashed var(--line);padding-top:16px}
+  .tb-related .rl{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:10px}
+  .tb-quiz{margin-top:26px;border-top:1px dashed var(--line);padding-top:16px}
+  .tb-quiz .ql{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:10px}
+  .tb-quiz .qitem{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+  .tb-quiz .qitem .qq{font-size:13.5px;font-weight:600;line-height:1.6;margin-bottom:8px}
+  .tb-quiz .qitem .qa{display:none;font-size:13px;color:var(--body-ink);line-height:1.85;white-space:pre-wrap;border-top:1px dashed var(--line);padding-top:8px;margin-top:4px}
+  .tb-quiz .qitem.open .qa{display:block}
+  .tb-quiz .qctl{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+  .tb-quiz .qctl button{font-size:12px;padding:4px 12px;border-radius:12px;border:1px solid var(--line);background:var(--panel);cursor:pointer;color:var(--muted)}
+  .tb-quiz .qctl button.yes:hover{border-color:var(--done);color:var(--done)}
+  .tb-quiz .qctl button.no:hover{border-color:var(--lv3);color:var(--lv3)}
+  .tb-quiz .qctl .msg{font-size:12px;color:var(--done);align-self:center}
+  .tb-note{margin-top:22px;border-top:1px dashed var(--line);padding-top:14px}
+  .tb-note .nl{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px}
+  .tb-note textarea{width:100%;min-height:70px;border:1px solid var(--line);border-radius:10px;background:var(--bg);padding:10px 12px;font-size:13px;line-height:1.7;color:var(--body-ink);resize:vertical;outline:none}
+  .tb-note textarea:focus{border-color:var(--accent)}
+  .tb-foot{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap;align-items:center}
+  .tb-foot .btn{padding:9px 18px;border-radius:10px;border:1px solid var(--line);background:var(--panel);font-size:13.5px;cursor:pointer;color:var(--ink)}
+  .tb-foot .btn:hover{background:var(--accent-soft)}
+  .tb-foot .btn.donebtn{background:var(--done);color:#fff;border-color:var(--done)}
+  .tb-foot .btn.prev{background:var(--bg)}
+  .tb-back{margin-left:auto}
+  .tut-search-hint{font-size:12px;color:var(--muted);margin-top:8px}
+  @media(max-width:900px){
+    .tutwrap{flex-direction:column}
+    .tutnav{position:static;width:100%;min-width:0;max-height:220px}
+    .tutmain{padding:16px 14px 26px}
+  }
+  #printArea{display:none}
+  @media print{
+    body{overflow:visible;height:auto}
+    #app,#menuBtn,#mask{display:none!important}
+    #printArea{display:block!important;padding:0}
+    #printArea .tb-block{margin:12px 0}
+    #printArea .tb-svg svg{max-width:100%}
+    #printArea .tb-note,#printArea .tb-quiz,#printArea .tb-foot,#printArea .tutnav{display:none}
+    #printArea h1{font-size:20px;margin-bottom:10px}
+    #printArea .pr-cat{color:var(--muted);font-size:12px;margin-bottom:16px}
+  }
+
   /* 移动端 / 侧栏收起时的展开按钮 */
   #menuBtn{display:none;position:fixed;top:10px;left:10px;z-index:60;width:42px;height:42px;border-radius:10px;border:1px solid var(--line);background:var(--panel);font-size:19px;cursor:pointer;align-items:center;justify-content:center;color:var(--accent);box-shadow:0 2px 8px var(--shadow)}
   body.side-collapsed #menuBtn{display:flex}
@@ -213,11 +321,12 @@
       <button id="themeToggle" title="切换深色/浅色模式">🌙</button>
     </header>
     <div id="search"><input id="q" type="text" placeholder="🔍 搜索题目 / 答案 / 标签…"></div>
-    <label id="scopeLbl"><input type="checkbox" id="scopeAll" checked> 全部范围（跨分类搜索）</label>
+    <label id="scopeLbl"><input type="checkbox" id="scopeAll" checked> 全部范围（跨分类搜索）<span style="margin-left:10px"><input type="checkbox" id="scopeTut"> 📘 搜教程</span></label>
     <nav id="cats"></nav>
     <div id="overall"></div>
     <div id="sideFoot">
       <div id="tools" class="hidden">
+        <div class="tool" id="tTut">📘 教程知识库<span class="badge zero" id="tutTotal">0</span></div>
         <div class="tool" id="tQuiz">🎯 自测模式</div>
         <div class="tool" id="tDue">📅 今日到期复习<span class="badge zero" id="dueCnt">0</span></div>
         <div class="tool" id="tWrong">📕 错题本<span class="badge zero" id="wrongCnt">0</span></div>
@@ -228,6 +337,7 @@
       <div id="helpBox" class="hidden">
         <div class="hp"><span>⌨️</span><span><b>/</b> 聚焦搜索 · 自测中 <b>空格</b> 显示答案/下一题 · <b>1/2/3</b> 会/模糊/不会</span></div>
         <div class="hp"><span>💡</span><span>点击卡片展开答案，先"主动回忆"自答再对照；掌握后按 1/3/7/15 天节奏复习更牢</span></div>
+        <div class="hp"><span>📘</span><span>每个分类带「📘」教程知识库：四层图谱 → 章节阅读 → 随堂小测；题目上点「📘 补课」直达对应章节</span></div>
         <div class="hp"><span>🛠️</span><span>功能：📊 统计看板 · 💾 备份/📥 恢复 · 🌙 深色模式 · 搜索自动高亮</span></div>
       </div>
       <button class="footbtn" id="moreBtn" title="展开更多功能">🗂 更多功能<span class="badge" id="moreCnt" style="visibility:hidden">0</span></button>
@@ -241,6 +351,7 @@
     <div id="list"></div>
   </main>
 </div>
+<div id="printArea"></div>
 
 <script src="data/java-basic.js"></script>
 <script src="data/java-concurrent.js"></script>
@@ -260,6 +371,22 @@
 <script src="data/study-methods.js"></script>
 <script src="data/memory.js"></script>
 <script src="data/ai-app.js"></script>
+<script src="data/tutorials/java-concurrent.js"></script>
+<script src="data/tutorials/jvm.js"></script>
+<script src="data/tutorials/redis.js"></script>
+<script src="data/tutorials/mysql.js"></script>
+<script src="data/tutorials/netty.js"></script>
+<script src="data/tutorials/java-basic.js"></script>
+<script src="data/tutorials/spring.js"></script>
+<script src="data/tutorials/design-pattern.js"></script>
+<script src="data/tutorials/linux.js"></script>
+<script src="data/tutorials/mq.js"></script>
+<script src="data/tutorials/microservice.js"></script>
+<script src="data/tutorials/algorithm.js"></script>
+<script src="data/tutorials/game-server.js"></script>
+<script src="data/tutorials/scenario.js"></script>
+<script src="data/tutorials/resume-deepdive.js"></script>
+<script src="data/tutorials/ai-app.js"></script>
 <script>
 const ORDER = ["study-methods","memory","java-basic","java-concurrent","jvm","mysql","redis","spring","design-pattern","netty","linux","mq","microservice","algorithm","game-server","scenario","resume-deepdive","ai-app"];
 const LEVELS = {1:"基础必会",2:"进阶高频",3:"深挖架构"};
@@ -272,13 +399,73 @@ const store = {
   get wrong(){ try{return JSON.parse(localStorage.getItem("qb_wrong")||"{}")}catch(e){return{}} },
   set wrong(v){ localStorage.setItem("qb_wrong", JSON.stringify(v)) },
   get review(){ try{return JSON.parse(localStorage.getItem("qb_review")||"{}")}catch(e){return{}} },
-  set review(v){ localStorage.setItem("qb_review", JSON.stringify(v)) }
+  set review(v){ localStorage.setItem("qb_review", JSON.stringify(v)) },
+  get tutDone(){ try{return JSON.parse(localStorage.getItem("qb_tut_done")||"{}")}catch(e){return{}} },
+  set tutDone(v){ localStorage.setItem("qb_tut_done", JSON.stringify(v)) },
+  get tutPos(){ try{return JSON.parse(localStorage.getItem("qb_tut_pos")||"{}")}catch(e){return{}} },
+  set tutPos(v){ localStorage.setItem("qb_tut_pos", JSON.stringify(v)) },
+  get tutNote(){ try{return JSON.parse(localStorage.getItem("qb_tut_note")||"{}")}catch(e){return{}} },
+  set tutNote(v){ localStorage.setItem("qb_tut_note", JSON.stringify(v)) }
 };
 let curCat = localStorage.getItem("qb_cat") || "memory";
 let curLv = 0, kw = "";
-let view = "cat";                 // cat | wrong | due | quiz
+let view = "cat";                 // cat | wrong | due | quiz | dash | tut | tutread | tutsearch
 let scopeAll = localStorage.getItem("qb_scope") !== "0";
+let scopeTut = localStorage.getItem("qb_scope_tut") === "1";
 let quiz = null;
+let tutCat = "", tutNode = "", tutBack = null;
+
+/* ---- 教程数据工具 ---- */
+function tutOf(catId){ return (window.TB||{})[catId] || null; }
+function tutCats(){ return ORDER.map(id=>tutOf(id)).filter(Boolean); }
+function tutNodeById(tb, id){ return (tb.nodes||[]).find(n=>n.id===id) || null; }
+function tutNodeDone(n){ return !!store.tutDone[n.id]; }
+function tutNodeLocked(tb, n){
+  if(store.tutDone[n.id]) return false;
+  return (n.depends||[]).some(d=>!store.tutDone[d]);
+}
+function tutProgress(tb){
+  const total = tb.nodes.length;
+  const done = tb.nodes.filter(n=>store.tutDone[n.id]).length;
+  return {done, total};
+}
+function setTutDone(nodeId, on){
+  const d = store.tutDone;
+  if(on) d[nodeId] = Date.now(); else delete d[nodeId];
+  store.tutDone = d;
+}
+const tutIndex = {}; // qid -> {cat, node}
+(function(){
+  for(const catId in (window.TB||{})){
+    const tb = window.TB[catId]; if(!tb||!tb.nodes) continue;
+    for(const n of tb.nodes){
+      (n.covers||[]).forEach(q=>{ if(!tutIndex[q]) tutIndex[q]={cat:catId, node:n}; });
+    }
+  }
+})();
+function tutOfQ(qid){ return tutIndex[qid]||null; }
+function goTutCat(catId){
+  tutCat = catId; tutNode = ""; tutBack = null;
+  view = "tut"; kw = ""; qInput.value = "";
+  closeMobileSidebar(); renderAll(); main.scrollTop = 0;
+}
+function goTutNode(catId, nodeId){
+  tutCat = catId; tutNode = nodeId;
+  tutBack = {view, curCat, curLv, kw};
+  view = "tutread"; closeMobileSidebar();
+  renderAll();
+}
+function goTutByQ(qid){
+  const t = tutOfQ(qid);
+  if(!t){ alert("该题暂无配套教程章节"); return; }
+  goTutNode(t.cat, t.node.id);
+}
+function goTutBack(){
+  if(tutBack && tutBack.view){ view = tutBack.view; curCat = tutBack.curCat||curCat; kw = tutBack.kw||""; qInput.value = kw; }
+  else view = "tut";
+  tutBack = null;
+  renderAll();
+}
 
 // 兼容旧数据：已有 qb_done 但无时间戳的，补当前时间
 (function(){
@@ -357,8 +544,16 @@ function markReviewed(id, stage){
 }
 
 /* ---- 卡片渲染 ---- */
-function qbodyHTML(q, extraBtn){
+function qbodyHTML(q, extraBtn, plain){
   const done = store.done, k = kw.trim();
+  const tagsRow = plain
+    ? `${(q.tags||[]).map(t=>`<span class="tag">#${hl(t,k)}</span>`).join("")}`
+    : `<div class="tagsline">
+      ${(q.tags||[]).map(t=>`<span class="tag">#${hl(t,k)}</span>`).join("")}
+      ${tutOfQ(q.id)?`<button class="tutlink" data-tutlink="${q.id}" title="知识有欠缺？进教程补课">📘 补课</button>`:""}
+      ${extraBtn||""}
+      <button class="donebtn ${done[q.id]?'on':''}" data-id="${q.id}">${done[q.id]?"✓ 已掌握":"标记掌握"}</button>
+    </div>`;
   return `
     ${q.point?`<div class="pointline">🎯 考点：${hl(q.point,k)}</div>`:""}
     ${q.approach?`<div class="sec"><div class="st">🧭 回答思路</div><div class="sc approachbox">${hl(q.approach,k)}</div></div>`:""}
@@ -367,11 +562,7 @@ function qbodyHTML(q, extraBtn){
       ?`<li><span class="fuq">Q：${hl(f.q,k)}</span><br><span class="fua">A：${hl(f.a,k)}</span></li>`
       :`<li>${hl(f,k)}</li>`).join("")}</ul></div>`:""}
     ${q.memory?`<div class="sec"><div class="st">🧠 记忆钩子</div><div class="memobox">${hl(q.memory,k)}</div></div>`:""}
-    <div class="tagsline">
-      ${(q.tags||[]).map(t=>`<span class="tag">#${hl(t,k)}</span>`).join("")}
-      ${extraBtn||""}
-      <button class="donebtn ${done[q.id]?'on':''}" data-id="${q.id}">${done[q.id]?"✓ 已掌握":"标记掌握"}</button>
-    </div>`;
+    ${tagsRow}`;
 }
 function qcardHTML(q, opts){
   opts = opts||{};
@@ -383,7 +574,7 @@ function qcardHTML(q, opts){
         <span class="qt">${opts.catName?`<span class="catbadge">${esc(opts.catName)}</span>`:""}${hl(q.q,k)}</span>
         <span class="lv lv${q.level}">${LEVELS[q.level]||""}</span>
       </div>
-      <div class="qbody">${qbodyHTML(q, opts.extraBtn||"")}</div>
+      <div class="qbody">${qbodyHTML(q, opts.extraBtn||"", opts.plain)}</div>
     </div>`;
 }
 function bindCards(){
@@ -402,6 +593,10 @@ function bindCards(){
     e.stopPropagation();
     markReviewed(b.dataset.id, +b.dataset.stage);
     renderAll();
+  });
+  main.querySelectorAll(".tutlink").forEach(b=>b.onclick=e=>{
+    e.stopPropagation();
+    goTutByQ(b.dataset.tutlink);
   });
 }
 
@@ -423,7 +618,14 @@ function renderFilters(shown, total, opts){
 /* ---- 各视图 ---- */
 function renderCat(){
   const c = window.QB[curCat]; if(!c) return;
-  document.getElementById("cathead").innerHTML = `<h2>${c.icon||"📘"} ${c.name}</h2><p>${c.desc||""}</p>`;
+  document.getElementById("cathead").innerHTML =
+    `<h2>${c.icon||"📘"} ${c.name}</h2>` +
+    (tutOf(c.id)
+      ? `<button class="chip" id="goTut" style="margin-top:12px;border-color:var(--accent);color:var(--accent)">📘 打开《${esc(c.name)}》教程知识库（补课用）</button>`
+      : `<div class="g-hint" style="margin-top:10px">本分类暂无教程。左下角「🗂 更多功能 → 📘 教程知识库」可查看已上线的分类（Java 并发 / JVM / Redis / MySQL / Netty）。</div>`) +
+    `<p>${c.desc||""}</p>`;
+  const gt = document.getElementById("goTut");
+  if(gt) gt.onclick = ()=>goTutCat(c.id);
   const k = kw.trim().toLowerCase();
   const list = c.questions.filter(q=>{
     if(curLv && q.level!==curLv) return false;
@@ -551,6 +753,7 @@ function renderQuiz(){
        <button class="qbtn" id="qQuit">退出自测</button>`
     : quiz.graded
       ? `<span class="qhint">已自评 ${["","✅ 会","🤔 模糊","❌ 不会"][quiz.pick]}，该题${quiz.pick===1?"已计入掌握":"已加入错题本"}</span>
+         ${quiz.pick!==1 && tutOfQ(q.id)?`<button class="qbtn" id="qTut">📘 去补课</button>`:""}
          <button class="qbtn primary" id="qNext">下一题（空格）⏭</button>`
       : `<button class="qbtn g1" data-g="1">✅ 会（1）</button>
          <button class="qbtn g2" data-g="2">🤔 模糊（2）</button>
@@ -575,6 +778,11 @@ function renderQuiz(){
   const qs = document.getElementById("qShow"); if(qs) qs.onclick = ()=>{ quiz.revealed=true; renderMain(); };
   const qq = document.getElementById("qQuit"); if(qq) qq.onclick = ()=>{ view="cat"; quiz=null; renderAll(); };
   const qn = document.getElementById("qNext"); if(qn) qn.onclick = nextQ;
+  const qt = document.getElementById("qTut"); if(qt) qt.onclick = ()=>{
+    const item = quiz.list[quiz.idx];
+    tutBack = {view:"quiz", curCat, curLv, kw};
+    goTutNode(item.cat, tutOfQ(item.q.id).node.id);
+  };
   main.querySelectorAll(".qbtn[data-g]").forEach(b=>b.onclick=()=>grade(+b.dataset.g));
   // 自测内也允许直接点「标记掌握」
   main.querySelectorAll(".donebtn").forEach(b=>b.onclick=e=>{
@@ -592,6 +800,9 @@ function renderMain(){
   const k = kw.trim().toLowerCase();
   if(view==="wrong"){ renderWrong(); return; }
   if(view==="due"){ renderDue(); return; }
+  if(view==="tut"){ renderTutGraph(); return; }
+  if(view==="tutread"){ renderTutRead(); return; }
+  if(k && scopeTut){ renderTutSearch(k); return; }
   if(k && scopeAll){ renderGlobal(k); return; }
   renderCat();
 }
@@ -601,10 +812,16 @@ function renderSidebar(){
   catsEl.innerHTML = cats().map(c=>{
     const dn = c.questions.filter(q=>done[q.id]).length;
     const pct = c.questions.length? Math.round(dn/c.questions.length*100):0;
-    return `<div class="cat ${c.id===curCat && view==="cat"?'active':''}" data-id="${c.id}">
+    const tut = tutOf(c.id);
+    const tp = tut? tutProgress(tut) : null;
+    const isActive = c.id===curCat && (view==="cat"||view==="tut"||view==="tutread"||view==="tutsearch");
+    return `<div class="cat ${isActive?'active':''}" data-id="${c.id}">
       <span class="ico">${c.icon||"📘"}</span>
       <div style="flex:1"><div style="display:flex"><span class="nm">${c.name}</span><span class="cnt" style="margin-left:auto">${dn}/${c.questions.length}</span></div>
-      <div class="bar"><i style="width:${pct}%"></i></div></div>
+      <div class="bar"><i style="width:${pct}%"></i></div>
+      ${tut?`<div class="tutline">📘 教程 ${tp.done}/${tp.total}${tp.done?' 已学':''}</div>`:""}
+      </div>
+      ${tut?`<span class="tutbtn" data-tut="${c.id}" title="打开 ${c.name} 教程知识库">📘</span>`:""}
     </div>`;
   }).join("");
   catsEl.querySelectorAll(".cat").forEach(el=>el.onclick=()=>{
@@ -612,6 +829,10 @@ function renderSidebar(){
     view = "cat"; quiz = null; kw = ""; qInput.value = "";
     closeMobileSidebar();
     renderAll();
+  });
+  catsEl.querySelectorAll(".tutbtn").forEach(b=>b.onclick=e=>{
+    e.stopPropagation();
+    goTutCat(b.dataset.tut);
   });
   const all = cats().flatMap(c=>c.questions);
   const dn = all.filter(q=>done[q.id]).length;
@@ -623,6 +844,10 @@ function renderSidebar(){
   const dEl = document.getElementById("dueCnt"), wEl = document.getElementById("wrongCnt");
   dEl.textContent = dueN; dEl.className = "badge"+(dueN?"":" zero");
   wEl.textContent = wrongN; wEl.className = "badge"+(wrongN?"":" zero");
+  const tutN = tutCats().length;
+  const tEl = document.getElementById("tutTotal");
+  tEl.textContent = tutN; tEl.className = "badge"+(tutN?"":" zero");
+  document.getElementById("tTut").classList.toggle("active", view==="tut"||view==="tutread");
   document.getElementById("tQuiz").classList.toggle("active", view==="quiz");
   document.getElementById("tDue").classList.toggle("active", view==="due");
   document.getElementById("tWrong").classList.toggle("active", view==="wrong");
@@ -687,6 +912,12 @@ helpBtn.onclick = ()=> helpBox.classList.contains("hidden") ? openHelp() : close
 document.getElementById("collapseBtn").onclick = toggleSidebar;
 
 /* ---- 工具入口事件 ---- */
+document.getElementById("tTut").onclick = ()=>{
+  const target = tutOf(curCat) ? curCat : (tutCats()[0]?.id || "");
+  if(!target){ alert("暂无教程内容"); return; }
+  tutCat = target; tutNode = ""; tutBack = null; view = "tut"; quiz = null;
+  closeMobileSidebar(); renderAll();
+};
 document.getElementById("tQuiz").onclick = startQuiz;
 document.getElementById("tWrong").onclick = ()=>{ view="wrong"; quiz=null; closeMobileSidebar(); renderAll(); };
 document.getElementById("tDue").onclick = ()=>{ view="due"; quiz=null; closeMobileSidebar(); renderAll(); };
@@ -698,7 +929,8 @@ document.getElementById("restoreFile").onchange = e=>{ if(e.target.files[0]) res
 /* ---- 搜索 ---- */
 qInput.oninput = e=>{
   kw = e.target.value;
-  if(view==="wrong"||view==="due"||view==="dash") view = "cat";
+  if(scopeTut && kw.trim()){ view = "tutsearch"; renderMain(); return; }
+  if(view==="wrong"||view==="due"||view==="dash"||view==="tutsearch") view = "cat";
   renderMain();
 };
 scopeBox.onchange = e=>{
@@ -706,11 +938,19 @@ scopeBox.onchange = e=>{
   localStorage.setItem("qb_scope", scopeAll?"1":"0");
   renderMain();
 };
+const scopeTutBox = document.getElementById("scopeTut");
+scopeTutBox.checked = scopeTut;
+scopeTutBox.onchange = e=>{
+  scopeTut = e.target.checked;
+  localStorage.setItem("qb_scope_tut", scopeTut?"1":"0");
+  renderMain();
+};
 
 /* ---- 键盘快捷键 ---- */
 document.addEventListener("keydown", e=>{
   const tag = (e.target.tagName||"").toLowerCase();
   const typing = tag==="input" || tag==="textarea";
+  if(view==="tutread" && e.key==="Escape" && !typing){ view="tut"; renderAll(); return; }
   if(view==="quiz" && quiz && quiz.idx<quiz.list.length){
     if(typing) return;
     if(e.code==="Space"){
@@ -737,7 +977,7 @@ function backupProgress(){
     exportDate: new Date().toISOString(),
     keys: {}
   };
-  ["qb_done","qb_done_ts","qb_wrong","qb_review","qb_cat","qb_scope","qb_theme"].forEach(k=>{
+  ["qb_done","qb_done_ts","qb_wrong","qb_review","qb_cat","qb_scope","qb_theme","qb_tut_done","qb_tut_pos","qb_tut_note"].forEach(k=>{
     data.keys[k] = localStorage.getItem(k);
   });
   const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
@@ -764,6 +1004,236 @@ function restoreProgress(file){
     }
   };
   reader.readAsText(file);
+}
+
+/* ==================== 教程知识库 ==================== */
+const TUT_LAYERS = ["入门","核心","进阶","实战"];
+function escNl(s){ return esc(s).replace(/\n/g,"<br>"); }
+function escA(s){ return esc(s).replace(/"/g,"&quot;"); }
+function splitTxt(s, n){
+  s = String(s||"");
+  if(s.length <= n) return [s,""];
+  return [s.slice(0,n), s.slice(n, n*2)+(s.length>n*2?"…":"")];
+}
+function renderBlock(b){
+  switch(b.t){
+    case "lead": return `<div class="tb-block tb-lead">${escNl(b.text)}</div>`;
+    case "pre": return `<div class="tb-block tb-pre"><b>📌 前置知识：</b>${(b.items||[]).map(escNl).join(" → ")}</div>`;
+    case "h": return `<div class="tb-block tb-h">${esc(b.text)}</div>`;
+    case "p": return `<div class="tb-block tb-p">${escNl(b.text)}</div>`;
+    case "list": return `<ul class="tb-block tb-list">${(b.items||[]).map(i=>`<li>${escNl(i)}</li>`).join("")}</ul>`;
+    case "code": return `<div class="tb-block tb-code"><div class="cd-lang">${esc(b.lang||"code")}</div><pre><code>${esc(b.code)}</code></pre></div>`;
+    case "svg": return `<div class="tb-block tb-svg">${b.svg||""}${b.caption?`<div class="cap">${esc(b.caption)}</div>`:""}</div>`;
+    case "table": return `<table class="tb-table"><thead><tr>${(b.head||[]).map(x=>`<th>${esc(x)}</th>`).join("")}</tr></thead><tbody>${(b.rows||[]).map(r=>`<tr>${r.map(x=>`<td>${escNl(x)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+    case "pits": return `<div class="tb-block tb-pits"><div class="pt">⚠️ 常见坑 · 面试官爱挖</div><ul>${(b.items||[]).map(i=>`<li>${escNl(i)}</li>`).join("")}</ul></div>`;
+    case "callout": {
+      const icon = b.kind==="unverified" ? "❓ 存疑" : b.kind==="warn" ? "⚠️" : "💡";
+      return `<div class="tb-block tb-callout ${esc(b.kind||"tip")}">${icon} ${escNl(b.text)}</div>`;
+    }
+    default: return "";
+  }
+}
+function renderTutGraph(){
+  const tb = tutOf(tutCat);
+  if(!tb){ view="cat"; renderMain(); return; }
+  const tp = tutProgress(tb);
+  const layers = [[],[],[],[]];
+  tb.nodes.forEach(n=>{ layers[Math.min(3, n.layer||0)].push(n); });
+  const W=158, H=64, GX=18, ROW=150, TOP=52, PAD=24;
+  const pos = {};
+  const maxW = Math.max(...layers.map(l=>l.length), 1);
+  const SW = Math.max(640, PAD*2 + maxW*W + (maxW-1)*GX);
+  const SH = TOP + 4*ROW + PAD + 6;
+  layers.forEach((ls, li)=>{
+    const totalW = ls.length*W + (ls.length-1)*GX;
+    let x = (SW - totalW)/2;
+    ls.forEach(n=>{ pos[n.id] = {x, y: TOP + li*ROW}; x += W + GX; });
+  });
+  let edges = "";
+  tb.nodes.forEach(n=>{
+    (n.depends||[]).forEach(d=>{
+      const a = pos[d], b = pos[n.id];
+      if(!a || !b) return;
+      const x1 = a.x + W/2, y1 = a.y + H, x2 = b.x + W/2, y2 = b.y, my = (y1+y2)/2;
+      edges += `<path class="g-edge" marker-end="url(#gArr)" d="M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2}"/>`;
+    });
+  });
+  const ARROW = `<defs><marker id="gArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>`;
+  let nodesHtml = "";
+  tb.nodes.forEach(n=>{
+    const p = pos[n.id];
+    const done = tutNodeDone(n);
+    const cls = "g-node" + (done?" done":"");
+    const [t1,t2] = splitTxt(n.title, 10);
+    const st = done ? "✓ 已学完" : `关联 ${(n.covers||[]).length} 题`;
+    nodesHtml += `<g class="${cls}" data-tutnode="${escA(n.id)}" transform="translate(${p.x},${p.y})">
+      <rect width="${W}" height="${H}" rx="10"/>
+      <text x="${W/2}" y="27" text-anchor="middle" class="t1">${escA(t1)}</text>
+      <text x="${W/2}" y="46" text-anchor="middle" class="t1" opacity=".8">${escA(t2)}</text>
+      <text x="${W/2}" y="60" text-anchor="middle" class="t2">${escA(st)}</text>
+    </g>`;
+  });
+  const layerLbl = layers.map((ls, li)=> ls.length? `<text class="g-layer" x="14" y="${TOP + li*ROW + 36}">${TUT_LAYERS[li]}</text>` : "").join("");
+  document.getElementById("cathead").innerHTML = `
+    <div class="tutbar">
+      <button class="btn" onclick="view='cat';renderAll()">← 刷题</button>
+      <h2>${tb.icon||"📘"} ${esc(tb.name)} · 知识库</h2>
+      <span class="tb-prog">已学 <b>${tp.done}</b> / ${tp.total} 篇</span>
+      <button class="btn" onclick="printTut('cat')">🖨 打印全分类</button>
+    </div>`;
+  document.getElementById("filters").innerHTML = "";
+  main.innerHTML = `
+    <div id="tutGraphWrap"><svg viewBox="0 0 ${SW} ${SH}">${ARROW}${edges}${layerLbl}${nodesHtml}</svg></div>
+    <div class="g-hint">💡 推荐学习顺序：<b>入门 → 核心 → 进阶 → 实战</b>，箭头表示「建议先学 A 再学 B」——仅作参考，<b>所有章节随时可学</b>。点开任意节点开始阅读，读完点「✔ 标记已学完」记录进度。</div>`;
+  main.querySelectorAll(".g-node").forEach(g=>g.onclick=()=>goTutNode(tutCat, g.dataset.tutnode));
+}
+function renderTutRead(){
+  const tb = tutOf(tutCat);
+  const node = tutNodeById(tb, tutNode);
+  if(!tb || !node){ view="tut"; renderAll(); return; }
+  const tp = tutProgress(tb);
+  const done = tutNodeDone(node);
+  const navHtml = (function(){
+    let html = "";
+    const layers=[[],[],[],[]];
+    tb.nodes.forEach(n=>layers[Math.min(3,n.layer||0)].push(n));
+      layers.forEach((ls,li)=>{
+        if(!ls.length) return;
+        html += `<div class="tn-l">${TUT_LAYERS[li]}</div>`;
+        ls.forEach(n=>{
+          const nd = tutNodeDone(n);
+          html += `<div class="tn-item ${n.id===node.id?'cur':''} ${nd?'done':''}" data-nid="${escA(n.id)}">
+          <span>${nd?"✅":"📖"}</span><span>${esc(n.title)}</span><span class="st">${nd?"✓":""}</span></div>`;
+        });
+      });
+    return html;
+  })();
+  const bodyHtml = node.body.map(renderBlock).join("");
+  const coversHtml = (node.covers||[]).map(id=>{
+    const f = findQ(id);
+    return f? qcardHTML(f.q, {catName:f.catName, plain:true}) : "";
+  }).join("");
+  const quizHtml = (node.quiz||[]).map((id,i)=>{
+    const f = findQ(id);
+    if(!f) return "";
+    return `<div class="qitem" data-qid="${escA(id)}">
+      <div class="qq">${i+1}. ${esc(f.q.q)}</div>
+      <div class="qa">${esc(f.q.a)}</div>
+      <div class="qctl">
+        <button class="yes">✅ 答对了</button>
+        <button class="no">❌ 还不会</button>
+        <button class="show">👁 看答案</button>
+        <span class="msg"></span>
+      </div></div>`;
+  }).join("");
+  const note = store.tutNote[node.id]||"";
+  const idx = tb.nodes.findIndex(n=>n.id===node.id);
+  const prev = tb.nodes[idx-1], next = tb.nodes[idx+1];
+  document.getElementById("cathead").innerHTML = `
+    <div class="tutbar">
+      <button class="btn" onclick="goTutBack()">← 返回</button>
+      <h2>${tb.icon||"📘"} ${esc(tb.name)}</h2>
+      <span class="tb-prog">已学 <b>${tp.done}</b> / ${tp.total} 篇</span>
+      <button class="btn" onclick="printTut('node')">🖨 打印本篇</button>
+    </div>`;
+  document.getElementById("filters").innerHTML = "";
+  main.innerHTML = `
+    <div class="tutwrap">
+      <nav class="tutnav">${navHtml}</nav>
+      <article class="tutmain">
+        <div class="tm-head">
+          <div class="tm-title">${esc(node.title)} ${done?`<span class="lv lv1" style="margin-left:auto">已学完</span>`:""}</div>
+          <div class="tm-meta">
+            <span class="chip-lv">${TUT_LAYERS[Math.min(3,node.layer||0)]}</span>
+            <span>📖 第 ${idx+1} / ${tb.nodes.length} 篇</span>
+            <span>🔗 关联 ${(node.covers||[]).length} 题</span>
+            ${(node.depends||[]).length?`<span>建议先学：${node.depends.map(d=>esc((tutNodeById(tb,d)||{title:d}).title)).join("、")}</span>`:""}
+          </div>
+        </div>
+        ${bodyHtml}
+        ${coversHtml?`<div class="tb-related"><div class="rl">🔗 关联面试题（学完去测，检验是否真懂）</div>${coversHtml}</div>`:""}
+        ${quizHtml?`<div class="tb-quiz"><div class="ql">🧪 随堂小测（答错的自动进错题本）</div>${quizHtml}</div>`:""}
+        <div class="tb-note">
+          <div class="nl">📝 我的笔记（仅本机保存，复习时优先回看）</div>
+          <textarea id="tutNote" placeholder="在这里写你的心得、疑问、项目场景…">${esc(note)}</textarea>
+        </div>
+        <div class="tb-foot">
+          <button class="btn ${done?'':'donebtn'}" onclick="setTutDone('${escA(node.id)}', ${done?'false':'true'});renderAll()">${done?"↩ 取消已学完":"✔ 标记已学完"}</button>
+          ${prev?`<button class="btn prev" onclick="goTutNode('${escA(tutCat)}','${escA(prev.id)}')">← ${esc(prev.title)}</button>`:""}
+          ${next?`<button class="btn prev" onclick="goTutNode('${escA(tutCat)}','${escA(next.id)}')">${esc(next.title)} →</button>`:""}
+          <button class="btn tb-back" onclick="view='tut';renderAll()">🗺 返回图谱</button>
+        </div>
+      </article>
+    </div>`;
+  main.querySelectorAll(".tn-item").forEach(el=>el.onclick=()=>goTutNode(tutCat, el.dataset.nid));
+  bindCards();
+  main.querySelectorAll(".tb-quiz .qitem").forEach(item=>{
+    const f = findQ(item.dataset.qid);
+    item.querySelector(".show").onclick = ()=> item.classList.add("open");
+    item.querySelector(".yes").onclick = ()=>{
+      item.querySelector(".msg").textContent = "👍 不错，这道已掌握";
+      item.classList.add("open");
+    };
+    item.querySelector(".no").onclick = ()=>{
+      if(f) addWrong(f.q, f.cat);
+      item.querySelector(".msg").textContent = "📕 已加入错题本，复习时重点看";
+      item.classList.add("open");
+      renderSidebar();
+    };
+  });
+  const ta = document.getElementById("tutNote");
+  if(ta){
+    let timer = null;
+    ta.oninput = ()=>{
+      clearTimeout(timer);
+      timer = setTimeout(()=>{
+        const n = store.tutNote; n[node.id] = ta.value; store.tutNote = n;
+      }, 400);
+    };
+  }
+  requestAnimationFrame(()=>{ const sp = store.tutPos[node.id]; if(sp) main.scrollTop = sp; });
+  let last = 0;
+  main.onscroll = ()=>{
+    const now = Date.now();
+    if(now - last < 300) return;
+    last = now;
+    const p = store.tutPos; p[node.id] = main.scrollTop; store.tutPos = p;
+  };
+}
+function renderTutSearch(k){
+  const rows = [];
+  tutCats().forEach(tb=>{
+    tb.nodes.forEach(n=>{
+      const hay = (n.title + " " + n.body.map(b=>{
+        if(b.t==="svg") return String(b.svg).replace(/<[^>]+>/g," ");
+        if(b.t==="code") return b.code||"";
+        return (b.text||"") + " " + (b.items||[]).join(" ") + " " + (b.head||[]).join(" ") + " " + (b.rows||[]).flat().join(" ");
+      }).join(" ")).toLowerCase();
+      if(hay.includes(k)) rows.push({tb, n});
+    });
+  });
+  document.getElementById("cathead").innerHTML =
+    `<h2>🔍 教程搜索</h2><p>关键词「${esc(kw.trim())}」· 跨全部教程正文/代码/图解标注（取消勾选「📘 搜教程」回到题库搜索）</p>`;
+  document.getElementById("filters").innerHTML = "";
+  main.innerHTML = rows.length
+    ? `<div class="tutwrap" style="display:block"><div class="tutmain" style="padding:16px 20px">${rows.map(r=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;margin-bottom:10px;cursor:pointer;background:var(--bg)" data-r="${escA(r.n.id)}" data-c="${escA(r.tb.id)}">
+          <span style="font-size:11px;color:var(--accent);background:var(--accent-soft);border-radius:8px;padding:2px 8px;white-space:nowrap">${esc(r.tb.name)}</span>
+          <span style="flex:1;font-size:14px;font-weight:600">${hl(r.n.title, k)}</span>
+          <span class="lv lv${Math.min(3,r.n.layer||0)+1}">${TUT_LAYERS[Math.min(3,r.n.layer||0)]}</span>
+        </div>`).join("")}</div></div>`
+    : `<div id="empty">教程里没有匹配「${esc(kw.trim())}」的内容</div>`;
+  main.querySelectorAll("[data-r]").forEach(el=>el.onclick=()=>goTutNode(el.dataset.c, el.dataset.r));
+}
+function printTut(scope){
+  const tb = tutOf(tutCat); if(!tb) return;
+  const nodes = scope==="cat" ? tb.nodes : [tutNodeById(tb, tutNode)].filter(Boolean);
+  if(!nodes.length) return;
+  const pa = document.getElementById("printArea");
+  pa.innerHTML = `<h1 style="font-size:20px">${esc(tb.icon)} ${esc(tb.name)} · 教程${scope==="cat"?"（全分类）":""}</h1>
+    <div class="pr-cat">${esc(tb.name)} 知识库 · ${new Date().toLocaleDateString()} · 建议配合题库复习</div>` +
+    nodes.map(n=>`<h1 style="font-size:17px;margin-top:22px">📖 ${esc(n.title)}</h1>` + n.body.map(renderBlock).join("")).join("");
+  window.print();
 }
 
 /* ---- 统计看板 ---- */

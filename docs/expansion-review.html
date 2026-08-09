@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>扩展机会审查报告 · Java 面试复习库</title>
+<style>
+  :root{
+    --bg:#faf7f2; --card:#ffffff; --ink:#2b2b2b; --sub:#6b6b6b;
+    --line:#e8e2d8; --accent:#b0713c; --accent-soft:#f4e8da;
+    --good:#2e7d32; --good-soft:#e6f2e7; --warn:#b26a00; --warn-soft:#fdf3e0;
+    --bad:#b3392f; --bad-soft:#fbe9e7; --info:#1e5f8a; --info-soft:#e4eff6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;line-height:1.7;padding:32px 20px}
+  .wrap{max-width:960px;margin:0 auto}
+  .hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:32px;margin-bottom:24px}
+  .hero h1{font-size:26px;margin-bottom:8px}
+  .hero .meta{color:var(--sub);font-size:14px;margin-bottom:16px}
+  .hero p{font-size:15px}
+  .tag{display:inline-block;background:var(--accent-soft);color:var(--accent);border-radius:6px;padding:2px 10px;font-size:13px;margin-right:6px}
+  .section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px 32px;margin-bottom:24px}
+  .section h2{font-size:20px;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--accent-soft)}
+  .section h3{font-size:16px;margin:20px 0 10px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--accent-soft);color:var(--accent);font-weight:600;white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  .pill{display:inline-block;border-radius:10px;padding:1px 10px;font-size:12px;font-weight:600;white-space:nowrap}
+  .p-high{background:var(--bad-soft);color:var(--bad)}
+  .p-mid{background:var(--warn-soft);color:var(--warn)}
+  .p-low{background:var(--info-soft);color:var(--info)}
+  .p-done{background:var(--good-soft);color:var(--good)}
+  .s-small{background:var(--good-soft);color:var(--good)}
+  .s-mid{background:var(--warn-soft);color:var(--warn)}
+  .s-large{background:var(--bad-soft);color:var(--bad)}
+  .gap{background:var(--bad-soft);border-left:4px solid var(--bad);border-radius:8px;padding:14px 18px;margin:12px 0}
+  .gap .t{font-weight:700;color:var(--bad);margin-bottom:4px}
+  .gap p{font-size:14px}
+  .idea{background:var(--info-soft);border-left:4px solid var(--info);border-radius:8px;padding:14px 18px;margin:12px 0}
+  .idea .t{font-weight:700;color:var(--info);margin-bottom:4px}
+  .idea p{font-size:14px}
+  ul,ol{padding-left:22px;font-size:14px}
+  li{margin:4px 0}
+  .roadmap{display:flex;flex-direction:column;gap:14px;margin-top:12px}
+  .phase{display:flex;gap:16px;align-items:flex-start}
+  .phase .num{flex-shrink:0;width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px}
+  .phase .body{flex:1}
+  .phase .body .pt{font-weight:700;margin-bottom:4px}
+  .phase .body p{font-size:14px}
+  .decision{background:var(--card);border:2px dashed var(--accent);border-radius:12px;padding:18px 20px;margin:12px 0}
+  .decision .dt{font-weight:700;color:var(--accent);margin-bottom:6px}
+  .foot{text-align:center;color:var(--sub);font-size:13px;padding:12px 0 40px}
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:16px 0}
+  .stat{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center}
+  .stat .n{font-size:28px;font-weight:700;color:var(--accent)}
+  .stat .l{font-size:13px;color:var(--sub);margin-top:2px}
+  code{background:var(--accent-soft);color:var(--accent);border-radius:4px;padding:1px 6px;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hero">
+  <h1>🔍 扩展机会审查报告</h1>
+  <div class="meta">Java 面试复习库 · 2026-08-08 · 基于代码库实察 + 访谈确认</div>
+  <p>现状：<span class="tag">题库 554 题</span><span class="tag">教程 256 篇</span><span class="tag">SVG 394 张</span><span class="tag">PWA 已启用</span><span class="tag">Anki 导出</span><br><br>
+  访谈结论：扩展主轴 = <b>学习机制增强</b>；核心痛点 = <b>「学了记不住」</b>。本报告围绕这两点展开，全库扩展机会按「直接解决痛点 → 补全闭环 → 锦上添花」三级排序。</p>
+</div>
+
+<div class="section">
+  <h2>一、现状资产全景</h2>
+  <div class="stat-grid">
+    <div class="stat"><div class="n">554</div><div class="l">题库题目（18 分类）</div></div>
+    <div class="stat"><div class="n">256</div><div class="l">教程篇数（16 技术分类）</div></div>
+    <div class="stat"><div class="n">394</div><div class="l">内联 SVG 图解</div></div>
+    <div class="stat"><div class="n">256</div><div class="l">随堂小测（3 题/篇）</div></div>
+  </div>
+  <h3>已实现功能</h3>
+  <table>
+    <tr><th>模块</th><th>说明</th><th>状态</th></tr>
+    <tr><td>题库五件套</td><td>考点/思路/答案/追问/记忆钩子 + 难度分级</td><td><span class="pill p-done">✅ 完整</span></td></tr>
+    <tr><td>知识图谱教程</td><td>四层 DAG（入门→核心→进阶→实战），依赖灰显</td><td><span class="pill p-done">✅ 完整</span></td></tr>
+    <tr><td>自测模式</td><td>随机抽题、隐藏答案、自评 1/2/3</td><td><span class="pill p-done">✅ 完整</span></td></tr>
+    <tr><td>错题本</td><td>模糊/不会自动收录，掌握后移出</td><td><span class="pill p-done">✅ 完整</span></td></tr>
+    <tr><td>间隔重复 SRS</td><td>固定 1/3/7/15 天节奏</td><td><span class="pill p-mid">⚠️ 有缺口</span></td></tr>
+    <tr><td>补课闭环</td><td>错题 → 教程直达 → 学完回测</td><td><span class="pill p-done">✅ 完整</span></td></tr>
+    <tr><td>统计看板</td><td>掌握率环形图 + 难度分布 + 分类进度</td><td><span class="pill p-done">✅ 完整</span></td></tr>
+    <tr><td>进度备份/恢复</td><td>JSON 导入导出（跨设备）</td><td><span class="pill p-done">✅ 完整</span></td></tr>
+    <tr><td>全文搜索</td><td>题库 + 教程双范围，关键词高亮</td><td><span class="pill p-done">✅ 完整</span></td></tr>
+    <tr><td>PWA 离线</td><td>sw.js v5 + manifest，可安装到桌面</td><td><span class="pill p-done">✅ 完整</span></td></tr>
+    <tr><td>Anki 导出</td><td>tools/export-anki.js → 1.8MB 牌组</td><td><span class="pill p-done">✅ 完整</span></td></tr>
+    <tr><td>打印版</td><td>print.html 速览/完整双视图</td><td><span class="pill p-done">✅ 完整</span></td></tr>
+    <tr><td>深色模式</td><td>一键切换 + 记忆偏好</td><td><span class="pill p-done">✅ 完整</span></td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <h2>二、核心机制缺口（「学了记不住」的根源）</h2>
+
+  <div class="gap">
+    <div class="t">🔴 缺口 1：复习无「答对/答错」反馈采集</div>
+    <p>「今日到期复习」只有 <code>✓ 已复习</code> 一个按钮，不区分对错。就算复习时完全想不起来，系统也照样把该题推进到下一周期。<b>这是记不住的最直接成因</b>——记忆系统对「你还不会」的事实无感知。</p>
+  </div>
+
+  <div class="gap">
+    <div class="t">🔴 缺口 2：自测评分不回流 SRS 调度</div>
+    <p>自测模式的 1/2/3（会/模糊/不会）只影响错题本，不会调整复习间隔。「模糊」的题 3 天后照样按原节奏复习，没有「答得越差、排得越密」的机制。</p>
+  </div>
+
+  <div class="gap">
+    <div class="t">🟠 缺口 3：固定节奏无记忆曲线</div>
+    <p>1/3/7/15 是拍脑袋的固定间隔。FSRS-4.5 这类算法根据每次复习的评分动态调整间隔（答得好的间隔指数级拉长、答得差的缩短），长期留存率显著更高——Anki 2023 年起已全量内置。</p>
+  </div>
+
+  <div class="gap">
+    <div class="t">🟠 缺口 4：教程学习与复习割裂</div>
+    <p>教程「已学完」和题库「已掌握」是两套独立状态。学完一篇教程没有触发对应的题目复习；补课回来也缺少「学完 → 重测 → 确认掌握」的验收闭环（现有补课只做了直达，未做回测）。</p>
+  </div>
+
+  <div class="gap">
+    <div class="t">🟠 缺口 5：掌握度只有二元态</div>
+    <p>题目只有「已掌握/未掌握」，没有中间档。统计看板显示的是 0/100% 的平面视图，无法回答「哪些题是弱掌握、该优先复习」。</p>
+  </div>
+</div>
+
+<div class="section">
+  <h2>三、扩展机会清单（按优先级排序）</h2>
+
+  <h3>🅰 学习机制增强（主轴 · 直接解决「记不住」）</h3>
+  <table>
+    <tr><th>机会</th><th>要点</th><th>收益</th><th>工作量</th><th>优先级</th></tr>
+    <tr>
+      <td><b>A1. 复习反馈闭环</b></td>
+      <td>到期复习页加「答对 ✓ / 答错 ✗」判定。答错 → 间隔重置回 1 天 + 自动进错题本 + 一键补课；答对 → 正常推进</td>
+      <td>记忆系统第一次感知「你不会」，是当前最高杠杆改动</td>
+      <td><span class="pill s-small">小</span></td>
+      <td><span class="pill p-high">P0</span></td>
+    </tr>
+    <tr>
+      <td><b>A2. 自测评分回流 SRS</b></td>
+      <td>自测「模糊/不会」→ 该题间隔重置 + 提前到期；「会」→ 正常推进。与 A1 共用一套评分 → 调度逻辑</td>
+      <td>所有学习行为统一驱动复习节奏，不再各管各</td>
+      <td><span class="pill s-small">小</span></td>
+      <td><span class="pill p-high">P0</span></td>
+    </tr>
+    <tr>
+      <td><b>A3. FSRS 动态间隔</b></td>
+      <td>复习评分升级为四档（重来/困难/良好/轻松），间隔按 FSRS-4.5 公式动态计算（纯前端 ~200 行，无依赖）</td>
+      <td>间隔指数级适配记忆强度，长期留存率明显提升</td>
+      <td><span class="pill s-mid">中</span></td>
+      <td><span class="pill p-mid">P1</span></td>
+    </tr>
+    <tr>
+      <td><b>A4. 教程→题目复习联动</b></td>
+      <td>教程「已学完」→ 其 covers 的题目 1 天后自动进入到期复习；补课回测：学完 → 重做原题 → 才确认掌握</td>
+      <td>打通学测闭环，教程学习真正作用于记忆</td>
+      <td><span class="pill s-mid">中</span></td>
+      <td><span class="pill p-mid">P1</span></td>
+    </tr>
+    <tr>
+      <td><b>A5. 掌握度分级</b></td>
+      <td>题目状态 0-4 档（未学/弱/中/强/稳固），由 SRS 评分历史推导；看板按掌握档着色，筛「弱掌握优先复习」</td>
+      <td>从平面 0/100 升级为可操作的复习优先级</td>
+      <td><span class="pill s-mid">中</span></td>
+      <td><span class="pill p-mid">P1</span></td>
+    </tr>
+    <tr>
+      <td><b>A6. 学习计划生成器</b></td>
+      <td>输入目标日期 + 每日可用时长 → 按难度/分类权重自动排每日任务（N 题 + M 篇教程 + 到期复习），勾选即完成</td>
+      <td>把「554 题 + 256 篇」的庞大内容折叠成每天的确定清单</td>
+      <td><span class="pill s-large">大</span></td>
+      <td><span class="pill p-low">P2</span></td>
+    </tr>
+  </table>
+
+  <h3>🅱 模拟面试闭环（README 已挂账）</h3>
+  <table>
+    <tr><th>机会</th><th>要点</th><th>收益</th><th>工作量</th><th>优先级</th></tr>
+    <tr>
+      <td><b>B1. 每日 5 题推送</b></td>
+      <td>每天早上自动推 5 题（基础 2 + 进阶 2 + 深挖 1）到对话，晚上验收</td>
+      <td>固定节奏的复习锚点，对抗拖延</td>
+      <td><span class="pill s-mid">中</span></td>
+      <td><span class="pill p-mid">P1</span></td>
+    </tr>
+    <tr>
+      <td><b>B2. 模拟面试场次</b></td>
+      <td>按简历分类生成 30/45 分钟面试场：开场 → 基础题 → 追问链（followups）→ 深挖 → 收尾，限时作答 + 面后复盘</td>
+      <td>把题库的追问链复用为全真面试演练，补「会做题→会面试」的差距</td>
+      <td><span class="pill s-mid">中</span></td>
+      <td><span class="pill p-mid">P1</span></td>
+    </tr>
+    <tr>
+      <td><b>B3. 答案语音化</b></td>
+      <td>SpeechSynthesis API 朗读题干/答案/钩子（零依赖），通勤听题</td>
+      <td>碎片时间利用，54% 用户提到过</td>
+      <td><span class="pill s-small">小</span></td>
+      <td><span class="pill p-low">P2</span></td>
+    </tr>
+  </table>
+
+  <h3>🅲 内容与形态扩展（锦上添花）</h3>
+  <table>
+    <tr><th>机会</th><th>要点</th><th>收益</th><th>工作量</th><th>优先级</th></tr>
+    <tr>
+      <td>C1. HR/行为面试题库</td>
+      <td>简历深挖分类已覆盖技术拷打，补 STAR 行为题（离职原因/团队冲突/加班）与薪资话术</td>
+      <td>覆盖面试后半程，完整度高</td>
+      <td><span class="pill s-mid">中</span></td>
+      <td><span class="pill p-low">P2</span></td>
+    </tr>
+    <tr>
+      <td>C2. 手写代码练习</td>
+      <td>算法分类 18 题配在线编辑器（或折叠的代码答案逐步展示）</td>
+      <td>笔试上机场景刚需</td>
+      <td><span class="pill s-large">大</span></td>
+      <td><span class="pill p-low">P2</span></td>
+    </tr>
+    <tr>
+      <td>C3. 按 JD 针对性补强</td>
+      <td>输入岗位 JD → 关键词匹配分类 → 调整题目权重/高亮重点</td>
+      <td>README 已挂账，临考前针对性极强</td>
+      <td><span class="pill s-mid">中</span></td>
+      <td><span class="pill p-low">P2</span></td>
+    </tr>
+    <tr>
+      <td>C4. 数据导出增强</td>
+      <td>Markdown/CSV 导出、教程合集 PDF（现只有 HTML 打印）</td>
+      <td>多端消费便利</td>
+      <td><span class="pill s-small">小</span></td>
+      <td><span class="pill p-low">P2</span></td>
+    </tr>
+  </table>
+</div>
+
+<div class="section">
+  <h2>四、推荐路线图</h2>
+  <div class="roadmap">
+    <div class="phase">
+      <div class="num">1</div>
+      <div class="body">
+        <div class="pt">止血（1 天）：A1 复习反馈 + A2 评分回流</div>
+        <p>最小改动让记忆系统感知「不会」：复习页双按钮、答错重置间隔 + 错题本 + 补课入口；自测评分统一走同一调度。直接命中「学了记不住」。</p>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="num">2</div>
+      <div class="body">
+        <div class="pt">闭环（1-2 天）：A4 教程联动 + B1 每日推送</div>
+        <p>教程学完触发题目复习、补课带回测验收；每天 5 题固定锚点。学→测→复习→补课全链路打通。</p>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="num">3</div>
+      <div class="body">
+        <div class="pt">进化（可选）：A3 FSRS + A5 掌握度 + B2 模拟面试</div>
+        <p>FSRS 四档评分接管间隔计算；掌握度分档驱动看板与复习优先级；模拟面试场次做最终冲刺演练。此阶段各功能独立、可挑选。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>五、待拍板决策点</h2>
+
+  <div class="decision">
+    <div class="dt">决策 1：SRS 升级深度</div>
+    <p>① 先做 A1+A2 两档反馈（答对/答错），改动小、当天见效 —— <b>推荐先做</b>；② 直接上 FSRS 四档（A1+A2+A3 一次到位），记忆效果上限更高但改动面大。</p>
+  </div>
+
+  <div class="decision">
+    <div class="dt">决策 2：本次动手范围</div>
+    <p>只做阶段 1 止血？还是阶段 1+2 一起？（阶段 3 的 FSRS/模拟面试可留到下一轮评估。）</p>
+  </div>
+
+  <div class="decision">
+    <div class="dt">决策 3：每日推送的落地通道</div>
+    <p>B1「每日 5 题推送」需要在 WorkBuddy 里建一个每日自动化任务（每天早上把 5 题发到对话）——是否现在就建？</p>
+  </div>
+</div>
+
+<div class="foot">审查基于代码库实察（data/ · index.html · CONTEXT.md · docs/adr/）· 术语已同步至 CONTEXT.md</div>
+
+</div>
+</body>
+</html>

@@ -1,6 +1,6 @@
-// Service Worker — Java面试题库 PWA 离线缓存 v2
+// Service Worker — Java面试题库 PWA 离线缓存 v6（内容更新）
 // 策略：导航请求网络优先（防白屏），静态资源缓存优先（提速）
-const CACHE = "java-interview-v2";
+const CACHE = "java-interview-v6";
 
 const PRECACHE = [
   "./",
@@ -30,7 +30,23 @@ const PRECACHE = [
   "./data/game-server.js",
   "./data/scenario.js",
   "./data/resume-deepdive.js",
-  "./data/ai-app.js"
+  "./data/ai-app.js",
+  "./data/tutorials/java-concurrent.js",
+  "./data/tutorials/jvm.js",
+  "./data/tutorials/redis.js",
+  "./data/tutorials/mysql.js",
+  "./data/tutorials/netty.js",
+  "./data/tutorials/java-basic.js",
+  "./data/tutorials/spring.js",
+  "./data/tutorials/design-pattern.js",
+  "./data/tutorials/linux.js",
+  "./data/tutorials/mq.js",
+  "./data/tutorials/microservice.js",
+  "./data/tutorials/algorithm.js",
+  "./data/tutorials/game-server.js",
+  "./data/tutorials/scenario.js",
+  "./data/tutorials/resume-deepdive.js",
+  "./data/tutorials/ai-app.js"
 ];
 
 // 安装：逐个缓存，某个失败不影响整体
