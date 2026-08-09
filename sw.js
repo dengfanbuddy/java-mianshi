@@ -1,6 +1,6 @@
-// Service Worker — Java面试题库 PWA 离线缓存 v6（内容更新）
+// Service Worker — Java面试题库 PWA 离线缓存 v7（教程知识库手机端适配）
 // 策略：导航请求网络优先（防白屏），静态资源缓存优先（提速）
-const CACHE = "java-interview-v6";
+const CACHE = "java-interview-v7";
 
 const PRECACHE = [
   "./",
